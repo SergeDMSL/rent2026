@@ -303,7 +303,7 @@ const PAINS = [
     how:['<b>Parcours vendeur</b> de l’estimation à l’acte authentique, avec relances automatiques entre chaque étape.',
          '<b>Parcours acquéreur</b> : qualification, rapprochement, propositions et relances, jusqu’à l’offre.',
          'WHISE agit automatiquement. <b>Vous validez les étapes clés.</b>'],
-    demo:'', show:'Un parcours vendeur actif : l’étape en cours et la prochaine relance programmée.' },
+    demo:'contact-list.html#standard', show:'Liste des contacts, filtre « vendeurs » : les relances programmées pour chaque vendeur.' },
 
   { id:'reactivite', icon:'phone', segs:['agence','mandataire','reseau'],
     q:'Des leads et des appels qui attendent trop longtemps',
@@ -312,7 +312,7 @@ const PAINS = [
     how:['<b>Lead scoring</b> : les contacts les plus engagés et prioritaires ressortent en premier.',
          '<b>EVA, assistante téléphonique</b> : elle se présente comme assistante IA, qualifie la demande et la transmet à votre équipe, même en dehors des horaires d’ouverture.',
          'Nouveau bien en portefeuille&nbsp;? WHISE prévient les acquéreurs correspondants et leur propose <b>un rendez-vous en ligne</b>.'],
-    demo:'', show:'La liste des contacts triés par score, puis une demande transmise par EVA.' },
+    demo:'contact-list.html#standard', show:'Liste des contacts, triée par score : les plus engagés en premier.' },
 
   { id:'base', icon:'db', segs:['agence','reseau'],
     q:'Une base de contacts qui dort',
@@ -330,7 +330,7 @@ const PAINS = [
     how:['<b>Diffusion</b> de vos annonces sur les principaux portails immobiliers et votre site, depuis une seule interface.',
          '<b>Rédaction assistée</b> : vos annonces et messages personnalisés en quelques instants. Vous relisez, vous publiez.',
          'Les tâches répétitives sont automatisées. <b>Ce temps revient à vos clients.</b>'],
-    demo:'', show:'Rédaction assistée d’une annonce, puis la diffusion vers les portails.' },
+    demo:'estate-list.html', show:'Liste des biens : ouvrir un bien, rédaction assistée de l’annonce, puis la publication vers les portails.' },
 
   { id:'terrain', icon:'map', segs:['mandataire','agence'],
     q:'Le soir, au bureau, à ressaisir la journée',
@@ -339,7 +339,7 @@ const PAINS = [
     how:['<b>Création de biens à la voix</b> : dictez les caractéristiques d’un bien dans l’application mobile.',
          '<b>Comptes rendus de visite</b> intégrés au parcours vendeur.',
          '<b>Vos données restent les vôtres</b> : export complet de vos contacts, biens et historiques, à tout moment.'],
-    demo:'', show:'L’application mobile : création d’un bien à la voix.' },
+    demo:'https://mobile.whise.eu', show:'Application mobile (de préférence sur un téléphone) : création d’un bien à la voix.' },
 
   { id:'conformite', icon:'shield', segs:['agence','mandataire','reseau'],
     q:'La pression réglementaire sur chaque transaction',
@@ -348,7 +348,7 @@ const PAINS = [
     how:['<b>Mandats et compromis signés électroniquement</b> avec MyNotary.',
          '<b>Obligations TRACFIN suivies</b> dans le dossier.',
          'Offre, compromis, acte authentique : <b>toutes les étapes dans un même dossier</b>.'],
-    demo:'', show:'Un dossier de transaction : signature MyNotary et suivi TRACFIN.',
+    demo:'estate-list.html', show:'Liste des biens : ouvrir un bien, puis MyNotary.',
     check:'Formulation TRACFIN à confirmer par le produit.' },
 
   { id:'pilotage', icon:'chart', segs:['agence','reseau'],
@@ -358,7 +358,7 @@ const PAINS = [
     how:['<b>Tableaux de bord</b> par agent et par agence.',
          '<b>Données du marché local</b> pour mieux estimer vos biens et conseiller vos clients.',
          'Pour les réseaux : <b>vue consolidée</b> par agence et par région, <b>droits par rôle</b> du siège à l’agent.'],
-    demo:'', show:'Le tableau de bord de l’agence, puis le détail par agent.',
+    demo:'https://admin.whise.eu/app/#/analytics', show:'Analytics : le tableau de bord de l’agence, puis le détail par agent.',
     check:'Disponibilité de « Connaissance du marché » en France à confirmer.' },
 
   { id:'migration', icon:'swap', segs:['agence','mandataire','reseau'],
@@ -368,7 +368,7 @@ const PAINS = [
     how:['<b>Vos données sont reprises</b> : contacts, biens, mandats et historiques, récupérés et contrôlés selon les possibilités de votre logiciel actuel.',
          '<b>Votre transition est préparée</b> : paramétrage et activation de la publication, planifiés avec vous.',
          '<b>Vos équipes sont accompagnées</b> : formation, WHISE Academy, support francophone par téléphone et par e-mail, et un interlocuteur WHISE jusqu’à la mise en service.'],
-    demo:'', show:'Pas d’écran : présenter le plan de transition et passer la main à l’équipe commerciale.' }
+    demo:'', show:'Outil d’import (lien à venir). En attendant : présenter le plan de transition.' }
 ];
 
 /* Letter per pain point: the reference code M-ADH means pain points A, D and H.
@@ -428,8 +428,8 @@ document.querySelectorAll('.chip').forEach(c => c.addEventListener('click', () =
 }));
 
 function demoLink(p){
-  if(DEMO_BASE && p.demo) return `<a class="demo" href="${DEMO_BASE}${p.demo}" target="_blank" rel="noopener">Voir dans WHISE →</a>`;
-  return `<span class="demo todo">Lien démo à configurer</span>`;
+  if(p.demo) return `<a class="demo" href="${/^https?:/.test(p.demo) ? p.demo : DEMO_BASE + p.demo}" target="_blank" rel="noopener">Voir dans WHISE →</a>`;
+  return `<span class="demo todo pres">Lien démo à configurer</span>`;
 }
 
 function renderResults(){
