@@ -1,0 +1,551 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#ffffff">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="WHISE RENT">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="assets/icon-180.png">
+<title>WHISE · Vos priorités</title>
+<style>
+@font-face{font-family:Montserrat;font-weight:300;src:url(fonts/Montserrat-Light.ttf)}
+@font-face{font-family:Montserrat;font-weight:500;src:url(fonts/Montserrat-Medium.ttf)}
+@font-face{font-family:Montserrat;font-weight:700;src:url(fonts/Montserrat-Bold.ttf)}
+@font-face{font-family:Montserrat;font-weight:800;src:url(fonts/Montserrat-ExtraBold.ttf)}
+:root{
+  --black:#0C1317;--fg2:#404A52;--fg3:#6B747B;--line:#E6E3E1;--soft:#F7F4F2;
+  --c1:#9E226B;--c2:#DC2550;--c3:#F94836;--c4:#FD7537;--c5:#FF9B3A;
+  --warm:linear-gradient(90deg,#9E226B,#DC2550 30%,#F94836 55%,#FD7537 78%,#FF9B3A);
+  --warm-d:linear-gradient(135deg,#FF9B3A,#FD7537 25%,#F94836 50%,#DC2550 75%,#9E226B);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:#fff;color:var(--black);font-family:Montserrat,system-ui,sans-serif;font-weight:500;-webkit-font-smoothing:antialiased}
+body{min-height:100vh;-webkit-tap-highlight-color:transparent;user-select:none}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+.gtext{background:var(--warm);-webkit-background-clip:text;background-clip:text;color:transparent}
+.wrap{max-width:1240px;margin:0 auto;padding:0 32px}
+
+/* top bar */
+header{position:sticky;top:0;padding-top:env(safe-area-inset-top,0px);z-index:5;background:rgba(255,255,255,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+header .wrap{display:flex;align-items:center;justify-content:space-between;height:72px}
+header img{height:30px}
+.tag{font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--c2)}
+.ghost{font-size:14px;font-weight:700;padding:10px 18px;border-radius:99px;border:1.5px solid var(--line)}
+.ghost:hover{border-color:var(--black)}
+
+/* hero */
+.hero{position:relative;padding:44px 0 24px;overflow:hidden}
+.hero h1{font-weight:300;font-size:clamp(30px,4.2vw,52px);line-height:1.06;letter-spacing:-.03em;max-width:860px}
+.hero h1 b{font-weight:800}
+.hero p{margin-top:14px;font-size:18px;color:var(--fg2);max-width:720px}
+.strokes{position:absolute;right:-20px;top:10px;width:220px;height:160px;pointer-events:none}
+.checker{position:absolute;right:-30px;bottom:6px;width:200px;height:56px;transform:skewX(-32deg);
+  background:conic-gradient(var(--black) 25%,transparent 0 50%,var(--black) 0 75%,transparent 0) 0 0/28px 28px;opacity:.9;
+  -webkit-mask:linear-gradient(90deg,transparent,#000 40%);mask:linear-gradient(90deg,transparent,#000 40%)}
+
+/* segment chips */
+.seg{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin:22px 0 6px}
+.seg span{font-size:14px;font-weight:700;color:var(--fg3);margin-right:4px}
+.chip{font-size:15px;font-weight:700;padding:11px 20px;border-radius:99px;border:1.5px solid var(--line);background:#fff;transition:.15s}
+.chip[aria-pressed=true]{background:var(--black);border-color:var(--black);color:#fff}
+
+/* pain grid */
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin:22px 0 120px}
+.pain{position:relative;text-align:left;border:1.5px solid var(--line);border-radius:18px;padding:22px 20px 20px;background:#fff;min-height:208px;display:flex;flex-direction:column;transition:transform .12s,border-color .15s,box-shadow .15s}
+.pain:active{transform:scale(.98)}
+.pain .ic{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:var(--soft);color:var(--c2);margin-bottom:14px}
+.pain .ic svg{width:22px;height:22px}
+.pain h3{font-weight:800;font-size:18px;line-height:1.2;letter-spacing:-.01em}
+.pain p{margin-top:8px;font-size:13.5px;line-height:1.45;color:var(--fg2)}
+.pain .who{margin-top:auto;padding-top:14px;display:flex;flex-wrap:wrap;gap:6px}
+.pain .who i{font-style:normal;font-size:11px;font-weight:700;letter-spacing:.04em;padding:4px 9px;border-radius:99px;background:var(--soft);color:var(--fg2)}
+.pain .tick{position:absolute;top:18px;right:18px;width:28px;height:28px;border-radius:50%;border:1.5px solid var(--line);display:grid;place-items:center;color:#fff;transition:.15s}
+.pain[aria-pressed=true]{border-color:transparent;box-shadow:0 0 0 2.5px var(--c2),0 14px 30px -14px rgba(220,37,80,.45)}
+.pain[aria-pressed=true] .tick{background:var(--warm-d);border-color:transparent}
+.pain[aria-pressed=true] .ic{background:var(--warm-d);color:#fff}
+.pain.dim{opacity:.4}
+.pain.match .who i.on{background:var(--black);color:#fff}
+
+/* bottom action bar */
+.bar{position:fixed;left:0;right:0;bottom:0;padding-bottom:env(safe-area-inset-bottom,0px);z-index:6;background:var(--black);color:#fff;transform:translateY(100%);transition:transform .25s}
+.bar.show{transform:none}
+.bar .wrap{display:flex;align-items:center;justify-content:space-between;gap:16px;height:88px}
+.bar .count{font-size:16px;font-weight:500}
+.bar .count b{font-weight:800}
+.cta{font-size:17px;font-weight:800;padding:17px 30px;border-radius:99px;background:var(--warm-d);color:#fff;white-space:nowrap}
+.cta:disabled{opacity:.4}
+
+/* results */
+#results{display:none;padding-bottom:60px}
+.rhead{padding:40px 0 10px}
+.rhead h2{font-weight:300;font-size:clamp(28px,3.6vw,44px);line-height:1.08;letter-spacing:-.03em}
+.rhead h2 b{font-weight:800}
+.answers{display:grid;gap:18px;margin-top:22px}
+.ans{display:grid;grid-template-columns:300px 1fr;border-radius:22px;overflow:hidden;border:1.5px solid var(--line);background:#fff}
+.ans .l{background:var(--black);color:#fff;padding:26px 24px;position:relative;overflow:hidden}
+.ans .l .n{font-weight:800;font-size:13px;letter-spacing:.14em;color:var(--c5)}
+.ans .l h3{margin-top:10px;font-weight:800;font-size:21px;line-height:1.2}
+.ans .l p{margin-top:10px;font-size:13.5px;line-height:1.45;color:#B9C0C5}
+.ans .l::after{content:"";position:absolute;left:0;right:0;bottom:0;height:5px;background:var(--warm)}
+.ans .r{padding:26px 28px;display:flex;flex-direction:column;gap:14px}
+.ans .r .k{font-size:12px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--c2)}
+.ans .r .promise{font-size:20px;font-weight:700;line-height:1.3;letter-spacing:-.01em}
+.ans ul{list-style:none;display:grid;gap:9px}
+.ans li{position:relative;padding-left:26px;font-size:15px;line-height:1.45;color:var(--fg2)}
+.ans li::before{content:"";position:absolute;left:0;top:5px;width:14px;height:14px;border-radius:50%;background:var(--warm-d)}
+.ans li b{color:var(--black);font-weight:700}
+.ans .foot{margin-top:auto;display:flex;flex-wrap:wrap;align-items:center;gap:12px;padding-top:6px}
+.demo{display:inline-flex;align-items:center;gap:10px;font-size:15px;font-weight:800;padding:13px 22px;border-radius:99px;background:var(--black);color:#fff;text-decoration:none}
+.demo.todo{background:#fff;color:var(--fg3);border:1.5px dashed #C9C2BD;font-weight:700}
+.note{font-size:13px;color:var(--fg3)}
+.note b{color:var(--fg2)}
+
+.network{margin-top:18px;border-radius:22px;background:var(--black);color:#fff;padding:28px;display:grid;grid-template-columns:1.1fr 2fr;gap:24px;align-items:center}
+.network h3{font-size:22px;font-weight:800;line-height:1.2}
+.network .g{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.network .g div{border-top:3px solid var(--c3);padding-top:10px;font-size:13px;color:#B9C0C5;line-height:1.4}
+.network .g b{display:block;color:#fff;font-size:14px;margin-bottom:4px}
+
+.close{margin-top:26px;border-radius:24px;background:var(--warm-d);color:#fff;padding:34px;display:grid;grid-template-columns:1fr auto;gap:24px;align-items:center;position:relative;overflow:hidden}
+.close h3{font-weight:300;font-size:clamp(24px,3vw,36px);line-height:1.1;letter-spacing:-.02em}
+.close h3 b{font-weight:800}
+.close p{margin-top:10px;font-size:15px;opacity:.92}
+.qr{width:150px;height:150px;border-radius:16px;background:#fff;color:var(--c2);display:grid;place-items:center;text-align:center;font-size:12px;font-weight:800;letter-spacing:.06em;padding:14px;border:2px dashed rgba(255,255,255,.6)}
+.racts{display:flex;flex-wrap:wrap;gap:12px;margin-top:22px}
+
+/* mandataire: QR handoff on the iPad */
+#mand{display:none;padding-bottom:60px}
+.handoff{margin-top:22px;display:grid;grid-template-columns:1fr 380px;gap:22px;align-items:stretch}
+.picked{border:1.5px solid var(--line);border-radius:22px;padding:26px 28px;display:flex;flex-direction:column;gap:14px}
+.picked .row{display:flex;gap:14px;align-items:flex-start}
+.picked .row .ic{flex:none;width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:var(--warm-d);color:#fff}
+.picked .row .ic svg{width:22px;height:22px}
+.picked .row h3{font-size:17px;font-weight:800;line-height:1.25}
+.picked .row p{margin-top:4px;font-size:14px;line-height:1.45;color:var(--fg2)}
+.qrcard{border-radius:22px;background:var(--black);color:#fff;padding:28px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:16px}
+.qrcard .k{font-size:12px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--c5)}
+.qrcard h3{font-size:20px;font-weight:800;line-height:1.25}
+#mqr{background:#fff;padding:14px;border-radius:16px;line-height:0}
+#mqr img,#mqr canvas{display:block;width:230px;height:230px}
+.ref{font-variant-numeric:tabular-nums;font-size:13px;color:#B9C0C5}
+.ref b{display:block;margin-top:4px;font-size:30px;font-weight:800;letter-spacing:.08em;color:#fff}
+.staff{margin-top:18px;border:1.5px dashed #C9C2BD;border-radius:16px;padding:14px 18px;font-size:14px;color:var(--fg2)}
+.staff b{color:var(--black)}
+
+/* mandataire: note opened on the visitor's own phone */
+#note{display:none;max-width:680px;margin:0 auto;padding:28px 16px 48px}
+#note .logo{height:28px}
+#note h1{margin-top:26px;font-weight:300;font-size:30px;line-height:1.1;letter-spacing:-.03em;text-wrap:balance}
+#note h1 b{font-weight:800}
+#note .intro{margin-top:12px;font-size:15.5px;line-height:1.55;color:var(--fg2)}
+.nitem{margin-top:22px;border:1.5px solid var(--line);border-radius:20px;overflow:hidden}
+.nitem .top{background:var(--black);color:#fff;padding:18px 20px}
+.nitem .top h2{font-size:18px;font-weight:800;line-height:1.25}
+.nitem .top p{margin-top:6px;font-size:13.5px;line-height:1.45;color:#B9C0C5}
+.nitem .body{padding:18px 20px;display:grid;gap:12px}
+.nitem .k{font-size:11.5px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--c2)}
+.nitem ul{list-style:none;display:grid;gap:8px}
+.nitem li{position:relative;padding-left:22px;font-size:14.5px;line-height:1.45;color:var(--fg2)}
+.nitem li::before{content:"";position:absolute;left:0;top:5px;width:12px;height:12px;border-radius:50%;background:var(--warm-d)}
+.nitem li b{color:var(--black)}
+.gain{border-radius:14px;background:var(--soft);padding:14px 16px;font-size:14.5px;line-height:1.5}
+.gain b{display:block;font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--c1);margin-bottom:4px}
+.ndir{margin-top:22px;border-radius:20px;background:var(--black);color:#fff;padding:22px 20px}
+.ndir h2{font-size:19px;font-weight:800;line-height:1.25}
+.ndir .g{margin-top:14px;display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.ndir .g div{border-top:3px solid var(--c3);padding-top:8px;font-size:13px;color:#B9C0C5;line-height:1.4}
+.ndir .g b{display:block;color:#fff;font-size:14px;margin-bottom:3px}
+.nnext{margin-top:22px;border-radius:20px;background:var(--warm-d);color:#fff;padding:22px 20px}
+.nnext h2{font-size:21px;font-weight:300;line-height:1.2}
+.nnext h2 b{font-weight:800}
+.nnext p{margin-top:8px;font-size:14.5px;line-height:1.5}
+.contact{margin-top:14px;background:#fff;color:var(--black);border-radius:14px;padding:14px 16px;font-size:14.5px;line-height:1.6;user-select:text}
+.contact b{font-weight:800}
+.nacts{margin-top:16px;display:flex;flex-wrap:wrap;gap:10px}
+.nacts button{font-size:15px;font-weight:800;padding:14px 20px;border-radius:99px;background:var(--black);color:#fff}
+.nacts button.alt{background:#fff;color:var(--black);border:1.5px solid var(--line)}
+.copied{font-size:13px;color:var(--fg3);align-self:center}
+.nref{margin-top:20px;font-size:12px;color:var(--fg3)}
+
+/* presenter mode (toggle with the P key or the corner button) */
+.pres{display:none}
+body.presenter .pres{display:block}
+.prestoggle{position:fixed;left:10px;bottom:10px;z-index:7;width:30px;height:30px;border-radius:50%;opacity:.15;background:var(--black);color:#fff;font-size:11px;font-weight:800}
+body.presenter .prestoggle{opacity:.8}
+
+@media (max-width:1100px){.handoff{grid-template-columns:1fr}.grid{grid-template-columns:repeat(2,1fr)}.ans{grid-template-columns:1fr}.network{grid-template-columns:1fr}}
+@media (max-width:640px){
+  .wrap{padding:0 16px}.grid{grid-template-columns:1fr}.pain{min-height:0}
+  .network .g{grid-template-columns:1fr 1fr}.close{grid-template-columns:1fr}
+  .tag-top{display:none}.ghost{white-space:nowrap}
+  .bar .wrap{height:auto;padding-top:14px;padding-bottom:14px;flex-direction:column;align-items:stretch}.cta{text-align:center}
+  .strokes,.checker{display:none}
+}
+</style>
+</head>
+<body>
+
+<header><div class="wrap">
+  <img src="assets/lockup_primary.png" alt="WHISE">
+  <div style="display:flex;align-items:center;gap:16px">
+    <span class="tag tag-top">RENT 2026 · Paris</span>
+    <button class="ghost" id="resetTop" hidden>Nouveau visiteur</button>
+  </div>
+</div></header>
+
+<!-- STEP 1 · choose -->
+<main id="pick">
+  <section class="hero"><div class="wrap">
+    <svg class="strokes" viewBox="0 0 220 160"><line x1="200" y1="8" x2="140" y2="150" stroke="url(#w)" stroke-width="7" stroke-linecap="round"/><line x1="216" y1="26" x2="168" y2="140" stroke="#FF9B3A" stroke-width="4" stroke-linecap="round"/><defs><linearGradient id="w" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#9E226B"/><stop offset=".5" stop-color="#F94836"/><stop offset="1" stop-color="#FF9B3A"/></linearGradient></defs></svg>
+    <h1>Qu’est-ce qui vous freine <b class="gtext">le plus aujourd’hui&nbsp;?</b></h1>
+    <p>Choisissez jusqu’à trois priorités. Nous vous montrons en quelques minutes comment WHISE y répond.</p>
+    <div class="seg" role="group" aria-label="Vous êtes">
+      <span>Vous êtes&nbsp;:</span>
+      <button class="chip" data-seg="agence" aria-pressed="false">Agence indépendante</button>
+      <button class="chip" data-seg="mandataire" aria-pressed="false">Mandataire</button>
+      <button class="chip" data-seg="reseau" aria-pressed="false">Groupe ou réseau</button>
+    </div>
+  </div></section>
+  <div class="wrap"><div class="grid" id="grid"></div></div>
+</main>
+
+<!-- STEP 2 · answers -->
+<main id="results"><div class="wrap">
+  <div class="rhead">
+    <div class="tag">Vos priorités</div>
+    <h2 style="margin-top:10px">Voici comment WHISE <b class="gtext">vous fait gagner du terrain.</b></h2>
+  </div>
+  <div class="answers" id="answers"></div>
+  <div id="networkBlock"></div>
+  <div class="close">
+    <div>
+      <h3>Allons plus loin, <b>sur vos propres cas.</b></h3>
+      <p>Réservez une démonstration personnalisée avec notre équipe France.</p>
+      <div class="racts">
+        <button class="ghost" style="color:#fff;border-color:rgba(255,255,255,.6)" id="back">← Modifier mes priorités</button>
+        <button class="ghost" style="color:#fff;border-color:rgba(255,255,255,.6)" id="reset">Nouveau visiteur</button>
+      </div>
+    </div>
+    <div class="qr" id="qr">QR démo<br>URL à fournir</div>
+  </div>
+</div></main>
+
+<!-- STEP 2b · mandataire: hand off by QR, no demo -->
+<main id="mand"><div class="wrap">
+  <div class="rhead">
+    <div class="tag">Mandataire</div>
+    <h2 style="margin-top:10px">Votre note pour <b class="gtext">votre direction</b>, sur votre téléphone.</h2>
+  </div>
+  <div class="handoff">
+    <div class="picked" id="mpicked"></div>
+    <div class="qrcard">
+      <div class="k">Scannez avec votre téléphone</div>
+      <div id="mqr"></div>
+      <h3>Vous recevez une page à transférer à votre directeur de réseau ou d’agence.</h3>
+      <div class="ref">Code de votre sélection<b id="mref">M-</b></div>
+    </div>
+  </div>
+  <div class="staff"><b>Équipe WHISE&nbsp;:</b> scannez le badge du visiteur avec l’application exposant RENT et ajoutez le code <b id="mref2"></b> en note.</div>
+  <div class="racts">
+    <button class="ghost" id="mback">← Modifier mes priorités</button>
+    <button class="ghost" id="mreset">Nouveau visiteur</button>
+  </div>
+</div></main>
+
+<!-- PHONE · the note the mandataire forwards to their director -->
+<div id="note"></div>
+
+<div class="bar" id="bar"><div class="wrap">
+  <div class="count" id="count"></div>
+  <button class="cta" id="go" disabled>Voir comment WHISE vous aide →</button>
+</div></div>
+
+<button class="prestoggle" id="prestoggle" title="Mode présentateur (touche P)">P</button>
+
+<script src="qrcode.min.js"></script>
+<script>
+/* ============================================================
+   CONFIG · to complete before RENT
+   DEMO_BASE: the URL of the WHISE demo environment.
+   Each pain point has a `demo` path (appended to DEMO_BASE).
+   Leave `demo` empty ("") and the button shows as "lien démo à configurer".
+   QR_URL: booking link for the QR code on the closing band (not rendered yet).
+   ============================================================ */
+const DEMO_BASE = "";   // e.g. "https://demo.whise.eu" (to provide)
+const MAX_PICK = 3;
+/* Public address of this page. The mandataire's phone opens NOTE_URL#m-<letters>.
+   The page must be shared as "anyone with the link" for visitors' phones to open it. */
+const NOTE_URL = location.origin + "/";
+const CONTACT = {name:"Gregory Iwes", role:"WHISE France", email:"gregory.iwes@whise.eu", phone:"+33 7 45 89 81 91"};
+const IDLE_RESET_SECONDS = 180; // back to the start screen after 3 min without a touch
+
+const ICONS = {
+  phone:'<path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/>',
+  bell:'<path d="M6 8a6 6 0 1 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.9 1.9 0 0 0 3.4 0"/>',
+  db:'<ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14c0 1.7 4 3 9 3s9-1.3 9-3V5"/><path d="M3 12c0 1.7 4 3 9 3s9-1.3 9-3"/>',
+  clock:'<circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>',
+  map:'<path d="M12 22s-8-6.5-8-12a8 8 0 0 1 16 0c0 5.5-8 12-8 12"/><circle cx="12" cy="10" r="3"/>',
+  shield:'<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/><path d="m9 12 2 2 4-4"/>',
+  chart:'<path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/>',
+  swap:'<path d="M16 3h5v5"/><path d="M4 20 21 3"/><path d="M21 16v5h-5"/><path d="m15 15 6 6"/><path d="M4 4l5 5"/>'
+};
+
+/* Copy: from the RENT 2026 FR brochure V5 (no unvalidated figures). */
+const PAINS = [
+  { id:'relance', icon:'bell', segs:['agence','mandataire','reseau'],
+    q:'Des mandats perdus faute de relance',
+    ctx:'Un vendeur non rappelé, une estimation sans suite, un acquéreur oublié après une visite.',
+    promise:'Chaque prospect suit un parcours structuré. Les relances partent au bon moment, selon son profil et son engagement.',
+    how:['<b>Parcours vendeur</b> de l’estimation à l’acte authentique, avec relances automatiques entre chaque étape.',
+         '<b>Parcours acquéreur</b> : qualification, rapprochement, propositions et relances, jusqu’à l’offre.',
+         'WHISE agit automatiquement. <b>Vous validez les étapes clés.</b>'],
+    demo:'', show:'Un parcours vendeur actif : l’étape en cours et la prochaine relance programmée.' },
+
+  { id:'reactivite', icon:'phone', segs:['agence','mandataire','reseau'],
+    q:'Des leads et des appels qui attendent trop longtemps',
+    ctx:'Un contact arrive le soir ou pendant une visite. Le temps de rappeler, il a déjà choisi une autre agence.',
+    promise:'Chaque demande reçoit une réponse rapide, même quand vous êtes sur le terrain.',
+    how:['<b>Lead scoring</b> : les contacts les plus engagés et prioritaires ressortent en premier.',
+         '<b>EVA, assistante téléphonique</b> : elle se présente comme assistante IA, qualifie la demande et la transmet à votre équipe, même en dehors des horaires d’ouverture.',
+         'Nouveau bien en portefeuille&nbsp;? WHISE prévient les acquéreurs correspondants et leur propose <b>un rendez-vous en ligne</b>.'],
+    demo:'', show:'La liste des contacts triés par score, puis une demande transmise par EVA.' },
+
+  { id:'base', icon:'db', segs:['agence','reseau'],
+    q:'Une base de contacts qui dort',
+    ctx:'Acquéreurs, vendeurs, anciens clients : des contacts qui vous ont coûté cher et que personne ne réactive.',
+    promise:'Votre base redevient une source de mandats et de transactions.',
+    how:['<b>Rapprochements automatiques</b> entre vos biens et vos acquéreurs.',
+         '<b>Campagnes ciblées</b> et scénarios de suivi pour réactiver vendeurs, acquéreurs et anciens clients.',
+         'Le <b>scoring</b> vous dit qui rappeler en premier.'],
+    demo:'', show:'Un nouveau bien : la liste des acquéreurs correspondants, puis une campagne ciblée.' },
+
+  { id:'admin', icon:'clock', segs:['agence','mandataire','reseau'],
+    q:'Trop d’heures perdues en administratif et en ressaisie',
+    ctx:'Chercher une information, compléter un dossier, rédiger un message, publier sur chaque portail.',
+    promise:'Une seule base : chaque information saisie sert à toutes les étapes de la vente.',
+    how:['<b>Diffusion</b> de vos annonces sur les principaux portails immobiliers et votre site, depuis une seule interface.',
+         '<b>Rédaction assistée</b> : vos annonces et messages personnalisés en quelques instants. Vous relisez, vous publiez.',
+         'Les tâches répétitives sont automatisées. <b>Ce temps revient à vos clients.</b>'],
+    demo:'', show:'Rédaction assistée d’une annonce, puis la diffusion vers les portails.' },
+
+  { id:'terrain', icon:'map', segs:['mandataire','agence'],
+    q:'Le soir, au bureau, à ressaisir la journée',
+    ctx:'Visites, estimations, nouveaux biens : tout ce qui se passe sur le terrain doit être retapé ensuite.',
+    promise:'Vous travaillez depuis le terrain, votre dossier est à jour en temps réel.',
+    how:['<b>Création de biens à la voix</b> : dictez les caractéristiques d’un bien dans l’application mobile.',
+         '<b>Comptes rendus de visite</b> intégrés au parcours vendeur.',
+         '<b>Vos données restent les vôtres</b> : export complet de vos contacts, biens et historiques, à tout moment.'],
+    demo:'', show:'L’application mobile : création d’un bien à la voix.' },
+
+  { id:'conformite', icon:'shield', segs:['agence','mandataire','reseau'],
+    q:'La pression réglementaire sur chaque transaction',
+    ctx:'Mandats, compromis, obligations TRACFIN : un oubli coûte cher, et tout se vérifie à la main.',
+    promise:'Vous sécurisez vos transactions, de l’offre à l’acte, en respectant vos obligations réglementaires françaises.',
+    how:['<b>Mandats et compromis signés électroniquement</b> avec MyNotary.',
+         '<b>Obligations TRACFIN suivies</b> dans le dossier.',
+         'Offre, compromis, acte authentique : <b>toutes les étapes dans un même dossier</b>.'],
+    demo:'', show:'Un dossier de transaction : signature MyNotary et suivi TRACFIN.',
+    check:'Formulation TRACFIN à confirmer par le produit.' },
+
+  { id:'pilotage', icon:'chart', segs:['agence','reseau'],
+    q:'Pas de vision claire sur l’activité de l’équipe',
+    ctx:'Combien de mandats, de visites, d’offres cette semaine ? Qui a besoin d’aide ? Les chiffres arrivent trop tard.',
+    promise:'Vous pilotez votre activité sur des chiffres, pas sur des impressions.',
+    how:['<b>Tableaux de bord</b> par agent et par agence.',
+         '<b>Données du marché local</b> pour mieux estimer vos biens et conseiller vos clients.',
+         'Pour les réseaux : <b>vue consolidée</b> par agence et par région, <b>droits par rôle</b> du siège à l’agent.'],
+    demo:'', show:'Le tableau de bord de l’agence, puis le détail par agent.',
+    check:'Disponibilité de « Connaissance du marché » en France à confirmer.' },
+
+  { id:'migration', icon:'swap', segs:['agence','mandataire','reseau'],
+    q:'La peur de changer de logiciel',
+    ctx:'Perdre des données, désorganiser l’agence, devoir tout réapprendre : on repousse, année après année.',
+    promise:'Changez de logiciel en toute sérénité. WHISE vous accompagne à chaque étape.',
+    how:['<b>Vos données sont reprises</b> : contacts, biens, mandats et historiques, récupérés et contrôlés selon les possibilités de votre logiciel actuel.',
+         '<b>Votre transition est préparée</b> : paramétrage et activation de la publication, planifiés avec vous.',
+         '<b>Vos équipes sont accompagnées</b> : formation, WHISE Academy, support francophone par téléphone et par e-mail, et un interlocuteur WHISE jusqu’à la mise en service.'],
+    demo:'', show:'Pas d’écran : présenter le plan de transition et passer la main à l’équipe commerciale.' }
+];
+
+/* Letter per pain point: the reference code M-ADH means pain points A, D and H.
+   GAIN: what the mandataire's director gains, per pain point (copy grounded in the brochure V5). */
+const LETTER = {relance:'A',reactivite:'B',base:'C',admin:'D',terrain:'E',conformite:'F',pilotage:'G',migration:'H'};
+const GAIN = {
+  relance:'Le suivi des estimations, des vendeurs et des acquéreurs ne dépend plus de la mémoire de chacun. Il suit le même parcours dans tout le réseau.',
+  reactivite:'Chaque demande entrante est qualifiée et transmise, même en dehors des horaires d’ouverture. Moins de contacts perdus pour la marque.',
+  base:'Les contacts déjà acquis par le réseau sont réactivés au lieu de dormir dans la base.',
+  admin:'Une seule saisie, diffusée sur les principaux portails et le site. Les conseillers passent leur temps avec leurs clients.',
+  terrain:'Les dossiers sont à jour en temps réel, depuis le terrain. La direction voit l’activité réelle sans devoir relancer ses conseillers.',
+  conformite:'Mandats et compromis signés avec MyNotary, obligations TRACFIN suivies dans le dossier&nbsp;: le même niveau de conformité dans tout le réseau.',
+  pilotage:'Tableaux de bord par agent et par agence, et une vue consolidée par région pour le siège.',
+  migration:'Reprise des données, transition planifiée et formation de toutes les agences, avec un interlocuteur WHISE jusqu’à la mise en service.'
+};
+const codeOf = ids => 'M-' + ids.map(i=>LETTER[i]).sort().join('');
+const idsOf = letters => letters.toUpperCase().split('').map(l=>Object.keys(LETTER).find(k=>LETTER[k]===l)).filter(Boolean);
+
+const SEG_LABEL = {agence:'Agence', mandataire:'Mandataire', reseau:'Réseau'};
+let picked = [], seg = null;
+
+const $ = s => document.querySelector(s);
+const grid = $('#grid');
+
+function svg(name){return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${ICONS[name]}</svg>`}
+
+function renderGrid(){
+  grid.innerHTML = PAINS.map(p => {
+    const on = picked.includes(p.id);
+    const full = picked.length >= MAX_PICK && !on;
+    return `<button class="pain${full?' dim':''}${seg&&p.segs.includes(seg)?' match':''}" data-id="${p.id}" aria-pressed="${on}">
+      <span class="tick"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="3"><path d="m5 12 5 5 9-10"/></svg></span>
+      <span class="ic">${svg(p.icon)}</span>
+      <h3>${p.q}</h3>
+      <p>${p.ctx}</p>
+      <span class="who">${p.segs.map(s=>`<i class="${s===seg?'on':''}">${SEG_LABEL[s]}</i>`).join('')}</span>
+    </button>`;
+  }).join('');
+  const n = picked.length;
+  $('#bar').classList.toggle('show', n>0);
+  $('#go').textContent = seg==='mandataire' ? 'Recevoir ma note pour ma direction →' : 'Voir comment WHISE vous aide →';
+  $('#count').innerHTML = n ? `<b>${n}</b> priorité${n>1?'s':''} sur ${MAX_PICK} choisie${n>1?'s':''}` : '';
+  $('#go').disabled = !n;
+}
+
+grid.addEventListener('click', e => {
+  const b = e.target.closest('.pain'); if(!b) return;
+  const id = b.dataset.id, i = picked.indexOf(id);
+  if(i>=0) picked.splice(i,1); else if(picked.length<MAX_PICK) picked.push(id);
+  renderGrid();
+});
+
+document.querySelectorAll('.chip').forEach(c => c.addEventListener('click', () => {
+  seg = seg===c.dataset.seg ? null : c.dataset.seg;
+  document.querySelectorAll('.chip').forEach(x => x.setAttribute('aria-pressed', x.dataset.seg===seg));
+  renderGrid();
+}));
+
+function demoLink(p){
+  if(DEMO_BASE && p.demo) return `<a class="demo" href="${DEMO_BASE}${p.demo}" target="_blank" rel="noopener">Voir dans WHISE →</a>`;
+  return `<span class="demo todo">Lien démo à configurer</span>`;
+}
+
+function renderResults(){
+  $('#answers').innerHTML = picked.map((id,k) => {
+    const p = PAINS.find(x=>x.id===id);
+    return `<article class="ans">
+      <div class="l"><div class="n">PRIORITÉ ${k+1}</div><h3>${p.q}</h3><p>${p.ctx}</p></div>
+      <div class="r">
+        <div class="k">Avec WHISE</div>
+        <div class="promise">${p.promise}</div>
+        <ul>${p.how.map(h=>`<li>${h}</li>`).join('')}</ul>
+        <div class="foot">${demoLink(p)}
+          <span class="note pres"><b>À montrer :</b> ${p.show}${p.check?` <b style="color:var(--c2)">· ${p.check}</b>`:''}</span>
+        </div>
+      </div>
+    </article>`;
+  }).join('');
+  $('#networkBlock').innerHTML = seg==='reseau' ? `<div class="network">
+      <h3>Groupes et réseaux&nbsp;: standardisez vos processus, <span class="gtext">préservez l’autonomie de chaque agence.</span></h3>
+      <div class="g">
+        <div><b>Vue consolidée</b>Activité et résultats par agence et par région.</div>
+        <div><b>Droits par rôle</b>Chacun voit ce qu’il doit voir, du siège à l’agent.</div>
+        <div><b>Déploiement accompagné</b>Migration, configuration centrale et formation de toutes les agences.</div>
+        <div><b>Contrôle et traçabilité</b>Accès API et IA tracés, sous le contrôle du siège.</div>
+      </div></div>` : '';
+}
+
+function renderMand(){
+  $('#mpicked').innerHTML = picked.map(id => { const p = PAINS.find(x=>x.id===id);
+    return `<div class="row"><span class="ic">${svg(p.icon)}</span><div><h3>${p.q}</h3><p>${p.promise}</p></div></div>`; }).join('');
+  const code = codeOf(picked);
+  $('#mref').textContent = code; $('#mref2').textContent = code;
+  const url = NOTE_URL + '#' + code.toLowerCase();
+  const box = $('#mqr'); box.innerHTML = '';
+  if(window.QRCode) new QRCode(box,{text:url,width:460,height:460,colorDark:'#0C1317',colorLight:'#ffffff',correctLevel:QRCode.CorrectLevel.M});
+  else box.innerHTML = '<div style="width:230px;height:230px;display:grid;place-items:center;font-size:13px;color:#404A52;line-height:1.4;padding:16px">QR indisponible hors ligne.<br>Connectez l’iPad à Internet.</div>';
+}
+
+function show(step){
+  const res = step==='results', mand = step==='mand';
+  $('#pick').style.display = (res||mand)?'none':'block';
+  $('#results').style.display = res?'block':'none';
+  $('#mand').style.display = mand?'block':'none';
+  $('#bar').classList.toggle('show', !res && !mand && picked.length>0);
+  $('#resetTop').hidden = !res && !mand && picked.length===0 && !seg;
+  if(res) renderResults();
+  if(mand) renderMand();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function reset(){picked=[];seg=null;document.querySelectorAll('.chip').forEach(x=>x.setAttribute('aria-pressed','false'));renderGrid();show('pick');$('#resetTop').hidden=true}
+
+$('#go').onclick = () => show(seg==='mandataire' ? 'mand' : 'results');
+$('#mback').onclick = () => show('pick');
+$('#mreset').onclick = reset;
+$('#back').onclick = () => show('pick');
+$('#reset').onclick = reset;
+$('#resetTop').onclick = reset;
+document.addEventListener('click', () => { if(picked.length||seg) $('#resetTop').hidden=false; });
+
+/* presenter mode: shows what to open in the demo, plus open checks */
+const togglePres = () => document.body.classList.toggle('presenter');
+$('#prestoggle').onclick = togglePres;
+document.addEventListener('keydown', e => { if(e.key==='p'||e.key==='P') togglePres(); });
+
+/* ---------- phone view: NOTE_URL#m-adh ---------- */
+function noteText(ids){
+  const strip = h => h.replace(/<[^>]+>/g,'').replace(/&nbsp;/g,' ');
+  let t = 'WHISE · Proposition pour notre réseau / notre agence\n\n';
+  ids.forEach(id => { const p = PAINS.find(x=>x.id===id);
+    t += '• ' + p.q + '\n' + strip(p.promise) + '\n' + p.how.map(h=>'  - '+strip(h)).join('\n') + '\n  Pour la direction : ' + strip(GAIN[id]) + '\n\n'; });
+  t += 'Pour la direction : vue consolidée par agence et par région, droits par rôle, déploiement accompagné, accès API et IA tracés sous le contrôle du siège.\n\n';
+  t += 'Contact WHISE France : ' + CONTACT.name + ' · ' + CONTACT.email + ' · ' + CONTACT.phone + '\n';
+  t += 'Lien : ' + NOTE_URL + '#' + codeOf(ids).toLowerCase();
+  return t;
+}
+function copy(text, done){
+  const ok = () => { $('#copied').textContent = done; };
+  const fallback = () => { const ta = document.createElement('textarea'); ta.value = text; document.body.appendChild(ta); ta.select();
+    try{ document.execCommand('copy'); ok(); }catch(e){ $('#copied').textContent = 'Sélectionnez le texte pour le copier.'; } ta.remove(); };
+  try{ navigator.clipboard.writeText(text).then(ok, fallback); }catch(e){ fallback(); }
+}
+function renderNote(ids){
+  document.querySelector('header').style.display = 'none';
+  ['#pick','#results','#mand','#bar','#prestoggle'].forEach(s => $(s).style.display = 'none');
+  const n = $('#note'); n.style.display = 'block';
+  n.innerHTML = `<img class="logo" src="${document.querySelector('header img').src}" alt="WHISE">
+    <h1>Une proposition pour <b class="gtext">votre réseau ou votre agence.</b></h1>
+    <p class="intro">Vous avez identifié ces priorités sur le stand WHISE à RENT 2026. Voici ce que WHISE change pour vous, et ce que votre direction y gagne. Transférez cette page à votre directeur.</p>
+    ${ids.map(id => { const p = PAINS.find(x=>x.id===id); return `<section class="nitem">
+      <div class="top"><h2>${p.q}</h2><p>${p.ctx}</p></div>
+      <div class="body"><div class="k">Avec WHISE</div><ul>${p.how.map(h=>`<li>${h}</li>`).join('')}</ul>
+      <div class="gain"><b>Pour votre direction</b>${GAIN[id]}</div></div></section>`; }).join('')}
+    <section class="ndir"><h2>Pour la direction du réseau&nbsp;: standardisez vos processus, <span class="gtext">préservez l’autonomie de chaque agence.</span></h2>
+      <div class="g"><div><b>Vue consolidée</b>Activité et résultats par agence et par région.</div>
+      <div><b>Droits par rôle</b>Chacun voit ce qu’il doit voir, du siège à l’agent.</div>
+      <div><b>Déploiement accompagné</b>Migration, configuration centrale et formation de toutes les agences.</div>
+      <div><b>Contrôle et traçabilité</b>Accès API et IA tracés, sous le contrôle du siège.</div></div></section>
+    <section class="nnext"><h2>Prochaine étape&nbsp;: <b>un échange avec votre direction.</b></h2>
+      <p>Notre équipe France vous présente WHISE, à vous et à votre directeur, sur vos propres cas.</p>
+      <div class="contact"><b>${CONTACT.name}</b> · ${CONTACT.role}<br>${CONTACT.email}<br>${CONTACT.phone}</div></section>
+    <div class="nacts"><button id="copyLink">Copier le lien</button><button class="alt" id="copyText">Copier le texte</button><span class="copied" id="copied" aria-live="polite"></span></div>
+    <p class="nref">Référence ${codeOf(ids)} · RENT 2026 · Paris</p>`;
+  $('#copyLink').onclick = () => copy(NOTE_URL + '#' + codeOf(ids).toLowerCase(), 'Lien copié. Collez-le dans un message à votre directeur.');
+  $('#copyText').onclick = () => copy(noteText(ids), 'Texte copié. Collez-le dans un e-mail à votre directeur.');
+}
+const hm = (location.hash||'').match(/^#m-([a-h]{1,3})$/i);
+const NOTE_MODE = !!(hm && idsOf(hm[1]).length);
+if(NOTE_MODE) renderNote(idsOf(hm[1]));
+
+/* idle reset for the booth (not on the visitor's phone) */
+let idle; const kick = () => { if(NOTE_MODE) return; clearTimeout(idle); idle = setTimeout(reset, IDLE_RESET_SECONDS*1000); };
+['click','touchstart','keydown','scroll'].forEach(ev => document.addEventListener(ev, kick, {passive:true}));
+kick();
+
+renderGrid();
+</script>
+<script>if("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(()=>{});</script>
+</body>
+</html>
