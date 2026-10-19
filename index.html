@@ -275,7 +275,7 @@ body.presenter .prestoggle{opacity:.8}
    Leave `demo` empty ("") and the button shows as "lien démo à configurer".
    QR_URL: booking link for the QR code on the closing band (not rendered yet).
    ============================================================ */
-const DEMO_BASE = "";   // e.g. "https://demo.whise.eu" (to provide)
+const DEMO_BASE = "https://web.whise.eu/";   // WHISE web app; the salesperson must be logged in on the iPad (in Safari)
 const MAX_PICK = 3;
 /* Public address of this page. The mandataire's phone opens NOTE_URL#m-<letters>.
    The page must be shared as "anyone with the link" for visitors' phones to open it. */
@@ -321,7 +321,7 @@ const PAINS = [
     how:['<b>Rapprochements automatiques</b> entre vos biens et vos acquéreurs.',
          '<b>Campagnes ciblées</b> et scénarios de suivi pour réactiver vendeurs, acquéreurs et anciens clients.',
          'Le <b>scoring</b> vous dit qui rappeler en premier.'],
-    demo:'', show:'Un nouveau bien : la liste des acquéreurs correspondants, puis une campagne ciblée.' },
+    demo:'contact-list.html#standard', show:'Un nouveau bien : la liste des acquéreurs correspondants, puis une campagne ciblée.' },
 
   { id:'admin', icon:'clock', segs:['agence','mandataire','reseau'],
     q:'Trop d’heures perdues en administratif et en ressaisie',
