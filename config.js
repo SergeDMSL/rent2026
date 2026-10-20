@@ -4,7 +4,7 @@
 // by firestore.rules. Leave projectId empty to hide the forms.
 window.WHISE_LEADS = {
   projectId: "rent2026whise",
-  apiKey: "",               // e.g. "AIza..."
+  apiKey: "AIzaSyB1PaF7jeaeCRK-oCYMNMdp9PqHPd_fFc8",
   authDomain: "rent2026whise.firebaseapp.com",
   privacyUrl: "https://www.whise.eu/charte-vie-privee/"  // shown next to the consent box
 };
