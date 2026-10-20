@@ -10,8 +10,7 @@ service cloud.firestore {
       return request.auth != null
         && request.auth.token.email_verified == true
         && request.auth.token.email in [
-          'serge.lemmens@whise.eu'
-          // add the France sales team here, e.g. 'gregory.iwes@whise.eu'
+          'serge.lemmens@whise.eu', 'gregory.iwes@whise.eu', 'julia.maadini@whise.eu', 'valentin.verger@whise.eu' 
         ];
     }
 
