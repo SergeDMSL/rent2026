@@ -255,6 +255,95 @@ header img{height:30px}
 }
 @media (prefers-reduced-motion:reduce){.track .fill,.track .car{transition:none}.track .st.on .dot,.track.go .st.on .dot,.steps li{animation:none;opacity:1;transform:scale(1.15)}}
 
+/* results: compact QR strip */
+.rstrip{margin-top:26px;border-radius:22px;background:var(--black);color:#fff;padding:18px 22px;display:grid;grid-template-columns:auto 1fr auto;gap:22px;align-items:center}
+.rstrip .qrbox{padding:8px;border-radius:12px}
+.rstrip .qrbox img,.rstrip .qrbox canvas{width:118px;height:118px}
+.rs-text h2{margin-top:6px;font-weight:300;font-size:clamp(22px,2.6vw,32px);line-height:1.1;letter-spacing:-.02em}
+.rs-text h2 b{font-weight:800}
+.rs-text p{margin-top:8px;font-size:14.5px;line-height:1.45;color:#B9C0C5;max-width:560px}
+.rs-side{display:flex;flex-direction:column;align-items:flex-end;gap:12px;text-align:right}
+.rs-side .ref b{font-size:24px}
+.rstrip+.staff{margin-top:12px;padding:10px 16px;font-size:13px}
+
+/* results: the interactive circuit */
+.circuit{margin-top:18px;border:1.5px solid var(--line);border-radius:24px;overflow:hidden}
+.ctabs{display:flex;gap:0;border-bottom:1.5px solid var(--line);background:var(--soft);overflow-x:auto}
+.ptab{flex:1;min-width:150px;display:flex;align-items:center;gap:12px;padding:16px 18px;text-align:left;border-right:1.5px solid var(--line);position:relative;transition:background .2s}
+.ptab:last-child{border-right:0}
+.ptab .pn{flex:none;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:14px;background:#fff;border:1.5px solid var(--line);color:var(--fg2)}
+.ptab .pt{display:grid;gap:2px;min-width:0}
+.ptab .pt b{font-size:15px;font-weight:800;line-height:1.2}
+.ptab .pt small{font-size:11.5px;color:var(--fg3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ptab[aria-selected=true]{background:#fff}
+.ptab[aria-selected=true]::after{content:"";position:absolute;left:0;right:0;bottom:-1.5px;height:4px;background:var(--warm)}
+.ptab[aria-selected=true] .pn{background:var(--warm-d);border-color:transparent;color:#fff}
+.cbody{padding:22px 24px 20px;display:grid;gap:18px;touch-action:pan-y;min-width:0}
+.cbody>*,.cgrid>*{min-width:0}
+.chint{font-size:13px;color:var(--fg3)}
+.chint b{color:var(--black)}
+.ctrack{position:relative;display:grid;grid-template-columns:repeat(9,1fr);padding-top:30px}
+.ctrack .rail,.ctrack .fill{position:absolute;top:50px;height:5px;border-radius:5px}
+.ctrack .rail{left:5.55%;right:5.55%;background:#E6E3E1}
+.ctrack .rail::before{content:"";position:absolute;left:0;width:11.1%;top:0;bottom:0;background:repeating-linear-gradient(90deg,#fff 0 6px,transparent 6px 12px)}
+.ctrack .fill{background:var(--warm);width:0}
+.ctrack .car{position:absolute;top:0;width:30px;height:30px;margin-left:-15px;border-radius:50%;background:var(--black);display:grid;place-items:center;box-shadow:0 5px 12px -3px rgba(12,19,23,.45);z-index:3}
+.ctrack .car::after{content:"";width:14px;height:14px;background:conic-gradient(#fff 25%,var(--c3) 0 50%,#fff 0 75%,var(--c3) 0) 0 0/7px 7px;border-radius:2px}
+.cst{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;gap:8px;padding:0 2px 4px;border-radius:14px}
+.cst .dot{margin-top:6px;width:30px;height:30px;border-radius:50%;background:#fff;border:3px solid #D6D0CC;display:grid;place-items:center;font-size:11px;font-weight:800;color:#fff;transition:transform .25s}
+.cst .nm{font-size:12px;font-weight:700;line-height:1.25;color:var(--fg3);text-align:center}
+.cst .bd{display:flex;gap:3px;min-height:18px}
+.cst .bd i{font-style:normal;width:18px;height:18px;border-radius:50%;background:var(--black);color:#fff;font-size:10px;font-weight:800;display:grid;place-items:center}
+.cst.pit .dot{border-style:dashed}
+.cst.on .dot{opacity:.35;transform:scale(.6);background:var(--warm-d);border-color:#fff;box-shadow:0 0 0 2px var(--c2)}
+.ctrack.go .cst.on .dot{animation:lit .45s both,pulse 2.4s 2s infinite}
+.cst.on .nm{color:var(--black);font-weight:800}
+.cst:hover .dot{transform:scale(1.08)}
+.cst.sel .dot{outline:3px solid var(--black);outline-offset:3px}
+.cst.sel .nm{text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:4px}
+.cdetail{border-radius:16px;background:var(--black);color:#fff;padding:16px 20px;display:grid;grid-template-columns:auto 1fr;gap:4px 14px;align-items:start;min-height:76px;animation:rise .35s both}
+.cdetail .k{grid-row:span 2;font-size:11.5px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--c5);padding-top:3px;white-space:nowrap}
+.cdetail h4{font-size:17px;font-weight:800;line-height:1.25}
+.cdetail p{font-size:14.5px;line-height:1.5;color:#D5DADD}
+.cdetail p b{color:#fff}
+.cdetail.off{background:var(--soft);color:var(--black)}
+.cdetail.off p{color:var(--fg2)}
+.cdetail.off .k{color:var(--fg3)}
+.cgrid{display:grid;grid-template-columns:1.25fr 1fr;gap:22px;align-items:start}
+.cwhise{display:grid;gap:12px}
+.cwhise .k{font-size:12px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--c2)}
+.cwhise .promise{font-size:19px;font-weight:700;line-height:1.3;letter-spacing:-.01em}
+.cwhise ul{list-style:none;display:grid;gap:8px}
+.cwhise li{position:relative;padding-left:24px;font-size:14.5px;line-height:1.45;color:var(--fg2)}
+.cwhise li::before{content:"";position:absolute;left:0;top:5px;width:13px;height:13px;border-radius:50%;background:var(--warm-d)}
+.cwhise li b{color:var(--black)}
+.cwhise .foot{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+.ovl{display:grid;gap:10px}
+.ovl button{display:flex;gap:12px;align-items:flex-start;text-align:left;padding:12px 14px;border-radius:14px;border:1.5px solid var(--line);background:#fff}
+.ovl button .pn{flex:none;width:26px;height:26px;border-radius:50%;background:var(--warm-d);color:#fff;font-weight:800;font-size:13px;display:grid;place-items:center}
+.ovl button b{display:block;font-size:15px}
+.ovl button span{font-size:13.5px;color:var(--fg2);line-height:1.4}
+.cthemes{display:grid;gap:10px}
+.tgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.tile{display:grid;gap:4px;align-content:start;text-align:left;padding:10px 10px 12px;border-radius:14px;border:1.5px solid var(--line);background:#fff;min-height:74px;transition:transform .15s,box-shadow .2s}
+.tile b{font-size:12px;font-weight:800;color:var(--fg3)}
+.tile span{font-size:12px;font-weight:700;line-height:1.25;color:var(--fg2)}
+.tile.on{background:var(--black);border-color:var(--black)}
+.tile.on b{background:var(--warm);-webkit-background-clip:text;background-clip:text;color:transparent}
+.tile.on span{color:#fff}
+.tile.sel{box-shadow:0 0 0 3px var(--c2)}
+.tile:active{transform:scale(.97)}
+.tusp2{font-size:14px;line-height:1.5;color:var(--fg2);min-height:42px}
+.tusp2 b{color:var(--black)}
+.cnav{display:flex;align-items:center;justify-content:space-between;gap:12px;border-top:1.5px solid var(--line);padding-top:14px}
+.cnav .dots{display:flex;gap:8px}
+.cnav .dots i{width:9px;height:9px;border-radius:50%;background:#D6D0CC}
+.cnav .dots i.on{background:var(--c2);width:24px;border-radius:9px}
+.cnav button:disabled{opacity:.35}
+@media (max-width:900px){.cgrid{grid-template-columns:1fr}.tgrid{grid-template-columns:repeat(4,1fr)}.rstrip{grid-template-columns:auto 1fr}.rs-side{grid-column:1/-1;flex-direction:row;justify-content:space-between;align-items:center}}
+@media (max-width:640px){.ctrack .cst:not(.on) .nm{visibility:hidden}.cst .nm{font-size:10px}.cst .dot{width:22px;height:22px}.ctrack .rail,.ctrack .fill{top:46px}.cbody{padding:16px}.tgrid{grid-template-columns:repeat(2,1fr)}.cdetail{grid-template-columns:1fr}.cdetail .k{grid-row:auto}.rstrip{grid-template-columns:1fr}.ptab{flex:none;min-width:0;padding:12px 14px}.ptab .pt small{display:none}.ptab .pt b{font-size:14px;white-space:nowrap}}
+@media (prefers-reduced-motion:reduce){.ctrack .cst.on .dot,.ctrack.go .cst.on .dot{animation:none;opacity:1;transform:none}.cdetail{animation:none}}
+
 /* presenter mode (toggle with the P key or the corner button) */
 .pres{display:none}
 body.presenter .pres{display:block}
@@ -299,21 +388,20 @@ body.presenter .prestoggle{opacity:.8}
 
 <!-- STEP 2 · answers -->
 <main id="results"><div class="wrap">
-  <div class="rtop">
-    <div class="rhead">
-      <div class="tag">Vos priorités</div>
-      <h2 style="margin-top:10px">Voici comment WHISE <b class="gtext">vous fait gagner du terrain.</b></h2>
-      <p class="rsub">Scannez le QR code avec votre téléphone&nbsp;: vous gardez ce récapitulatif et notre équipe France vous recontacte pour une démonstration sur vos propres cas.</p>
-      <div class="staff"><b>Équipe WHISE&nbsp;:</b> avant la démo, faites scanner le QR code au visiteur. Scannez son badge avec l’application exposant RENT et ajoutez le code <b id="rref2"></b> en note.</div>
+  <div class="rstrip">
+    <div class="qrbox" id="rqr"></div>
+    <div class="rs-text">
+      <div class="tag" style="color:var(--c5)">Vos priorités · RENT 2026</div>
+      <h2>Votre parcours commercial, <b class="gtext">avec WHISE.</b></h2>
+      <p>Scannez le QR code&nbsp;: vous gardez ce récapitulatif sur votre téléphone et notre équipe France vous recontacte.</p>
     </div>
-    <div class="qrcard rqrcard">
-      <div class="k">Scannez avec votre téléphone</div>
-      <div class="qrbox" id="rqr"></div>
-      <div class="ref">Code de votre sélection<b id="rref"></b></div>
-      <button class="lightbtn leadbtn" hidden>Pas de téléphone&nbsp;? Laissez vos coordonnées ici</button>
+    <div class="rs-side">
+      <div class="ref">Code<b id="rref"></b></div>
+      <button class="lightbtn leadbtn" hidden>Pas de téléphone&nbsp;?</button>
     </div>
   </div>
-  <div class="answers" id="answers"></div>
+  <div class="staff"><b>Équipe WHISE&nbsp;:</b> faites scanner le QR code au visiteur, scannez son badge avec l’application exposant RENT et ajoutez le code <b id="rref2"></b> en note.</div>
+  <section class="circuit" id="circuit" aria-label="Où WHISE agit dans votre parcours"></section>
   <div id="networkBlock"></div>
   <div class="close">
     <div>
@@ -500,13 +588,13 @@ const idsOf = letters => letters.toUpperCase().split('').map(l=>Object.keys(LETT
 /* The 7 WHISE themes (offering master "WHISE new offering_final 07082025.xlsx",
    names as in the RENT brochure V5) and the agency's commercial journey. */
 const THEMES = [
-  {n:'01', name:'Visibilité'},
-  {n:'02', name:'Animation de votre base contacts'},
-  {n:'03', name:'Connaissance du marché'},
-  {n:'04', name:'Transaction sécurisée'},
-  {n:'05', name:'Conformité intégrée'},
-  {n:'06', name:'Pilotage'},
-  {n:'07', name:'Accompagnement'}
+  {n:'01', name:'Visibilité', usp:'Communiquez efficacement, convertissez plus avec moins d’effort et de budget.'},
+  {n:'02', name:'Animation de votre base contacts', usp:'Accompagnez vos prospects vers la conversion de manière automatisée.'},
+  {n:'03', name:'Connaissance du marché', usp:'Accédez à une transparence en temps réel sur l’offre, la demande et les tendances.'},
+  {n:'04', name:'Transaction sécurisée', usp:'Gérez vos transactions sans faille pour une expérience client optimale.'},
+  {n:'05', name:'Conformité intégrée', usp:'Centralisez et gérez vos documents et vos obligations dans un seul outil.'},
+  {n:'06', name:'Pilotage', usp:'Appuyez vos décisions sur les données et comparez vos performances à chaque étape.'},
+  {n:'07', name:'Accompagnement', usp:'Nos experts vous accompagnent pour accélérer votre développement.'}
 ];
 const STAGES = ['Mise en route','Diffusion','Contact','Qualification','Suivi & relances','Visites','Mandat & offre','Compromis & acte','Fidélisation'];
 /* Per pain point: its WHISE theme (index in THEMES), the theme's promise (offering master, FR USP),
@@ -606,23 +694,120 @@ function demoLink(p){
   return `<span class="demo todo pres">Lien démo à configurer</span>`;
 }
 
+const SHORT = {relance:'Relances', reactivite:'Réactivité', base:'Base qui dort', admin:'Administratif', terrain:'Terrain', conformite:'Réglementaire', pilotage:'Pilotage', migration:'Changer de logiciel'};
+let cur = 0, selStage = null, selTheme = null;
+const stagesOf = id => Object.keys(MAP[id].at).map(Number).sort((a,b)=>a-b);
+const posN = i => (i + .5) / STAGES.length * 100;
+
+/* Results: one circuit. Tabs = priorities (+ overview); the car drives to the stages each priority touches;
+   every stage and every theme tile can be tapped. */
 function renderResults(){
-  $('#answers').innerHTML = picked.map((id,k) => {
-    const p = PAINS.find(x=>x.id===id);
-    return `<article class="ans">
-      <div class="l"><div class="n">PRIORITÉ ${k+1}</div><h3>${p.q}</h3><p>${p.ctx}</p></div>
-      <div class="r">
-        <div class="k">Avec WHISE</div>
-        <div class="promise">${p.promise}</div>
-        <ul>${p.how.map(h=>`<li>${h}</li>`).join('')}</ul>
-        <div class="foot">${demoLink(p)}
-          <span class="note pres"><b>À montrer :</b> ${p.show}${p.check?` <b style="color:var(--c2)">· ${p.check}</b>`:''}</span>
-        </div>
+  cur = 0; selStage = null; selTheme = null;
+  const many = picked.length > 1;
+  $('#circuit').innerHTML = `
+    <div class="ctabs" role="tablist">
+      ${picked.map((id,k) => `<button class="ptab" role="tab" data-k="${k}"><span class="pn">${k+1}</span><span class="pt"><b>${SHORT[id]}</b><small>${THEMES[MAP[id].t].n} · ${THEMES[MAP[id].t].name}</small></span></button>`).join('')}
+      ${many ? `<button class="ptab" role="tab" data-k="-1"><span class="pn">★</span><span class="pt"><b>Vue d’ensemble</b><small>Toutes vos priorités</small></span></button>` : ''}
+    </div>
+    <div class="cbody" id="cbody">
+      <div class="chint">Touchez une <b>étape allumée</b> pour voir ce que WHISE y fait.</div>
+      <div class="ctrack" id="ctrack">
+        <span class="rail"></span><span class="fill"></span><span class="car" aria-hidden="true"></span>
+        ${STAGES.map((n,i) => `<button class="cst${i===0?' pit':''}" data-i="${i}"><span class="dot"></span><span class="nm">${n}</span><span class="bd"></span></button>`).join('')}
       </div>
-      <div class="jr">${themeHTML(id)}${journeyHTML(id)}</div>
-    </article>`;
-  }).join('');
-  runTracks($('#answers'));
+      <div id="cdetail"></div>
+      <div class="cgrid">
+        <div class="cwhise" id="cwhise"></div>
+        <div class="cthemes"><div class="jtitle">Les 7 thèmes WHISE</div><div class="tgrid" id="tgrid"></div><p class="tusp2" id="tusp"></p></div>
+      </div>
+      <div class="cnav"><button class="ghost" id="cprev">← Précédent</button><div class="dots" id="cdots"></div><button class="ghost" id="cnext">Suivant →</button></div>
+    </div>`;
+  const c = $('#circuit');
+  c.querySelectorAll('.ptab').forEach(b => b.onclick = () => go(+b.dataset.k));
+  c.querySelectorAll('.cst').forEach(b => b.onclick = () => { selStage = +b.dataset.i; paintDetail(); });
+  $('#cprev').onclick = () => step(-1); $('#cnext').onclick = () => step(1);
+  let x0 = null;
+  $('#cbody').addEventListener('touchstart', e => { x0 = e.touches[0].clientX; }, {passive:true});
+  $('#cbody').addEventListener('touchend', e => { if(x0===null) return; const dx = e.changedTouches[0].clientX - x0; x0 = null; if(Math.abs(dx) > 70) step(dx < 0 ? 1 : -1); }, {passive:true});
+  go(0);
+}
+const order = () => picked.length > 1 ? [...picked.keys(), -1] : [0];
+function step(d){ const o = order(), i = o.indexOf(cur), n = i + d; if(n >= 0 && n < o.length) go(o[n]); }
+
+function go(k){
+  cur = k; selTheme = null;
+  const ids = k === -1 ? picked : [picked[k]];
+  const at = [...new Set(ids.flatMap(stagesOf))].sort((a,b)=>a-b);
+  const first = at[0], last = at[at.length-1];
+  selStage = first;
+  // tabs + dots
+  $('#circuit').querySelectorAll('.ptab').forEach(b => b.setAttribute('aria-selected', +b.dataset.k === k));
+  const o = order();
+  $('#cdots').innerHTML = o.map(x => `<i class="${x===k?'on':''}"></i>`).join('');
+  $('#cprev').disabled = o.indexOf(k) === 0; $('#cnext').disabled = o.indexOf(k) === o.length - 1;
+  // stations
+  const t = $('#ctrack'); t.classList.remove('go');
+  t.querySelectorAll('.cst').forEach(b => {
+    const i = +b.dataset.i, on = at.includes(i);
+    b.classList.toggle('on', on);
+    const d = b.querySelector('.dot'); d.style.animationDelay = on ? (last===first ? .15 : .15 + 1.4*(i-first)/(last-first)).toFixed(2) + 's, 2s' : '';
+    b.querySelector('.bd').innerHTML = k === -1 ? picked.map((id,n) => stagesOf(id).includes(i) ? `<i>${n+1}</i>` : '').join('') : '';
+    b.setAttribute('aria-label', STAGES[i] + (on ? ' · WHISE agit ici' : ''));
+  });
+  // race: reset the car to the first stage, then drive to the last
+  const fill = t.querySelector('.fill'), car = t.querySelector('.car');
+  [fill, car].forEach(el => el.style.transition = 'none');
+  fill.style.left = posN(first) + '%'; fill.style.width = '0'; car.style.left = posN(first) + '%';
+  void t.offsetWidth;
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  [fill, car].forEach(el => el.style.transition = reduce ? 'none' : (el===car ? 'left' : 'width') + ' 1.4s linear .15s');
+  t.classList.add('go');
+  fill.style.width = (posN(last) - posN(first)) + '%'; car.style.left = posN(last) + '%';
+  paintWhise(ids, k); paintThemes(ids); paintDetail();
+}
+
+function paintDetail(){
+  const ids = cur === -1 ? picked : [picked[cur]];
+  $('#ctrack').querySelectorAll('.cst').forEach(b => b.classList.toggle('sel', +b.dataset.i === selStage));
+  const i = selStage, acts = ids.filter(id => id in MAP && i in MAP[id].at);
+  const say = id => MAP[id].at[i] || MAP[id].overlay;
+  let html;
+  if(!acts.length) html = `<div class="cdetail off"><div class="k">${STAGES[i]}</div><h4>Pas d’action WHISE à cette étape pour ${cur===-1?'vos priorités':'cette priorité'}.</h4><p>Les étapes allumées montrent où WHISE agit.</p></div>`;
+  else if(cur !== -1) html = `<div class="cdetail"><div class="k">${STAGES[i]}</div><h4>${say(acts[0])}</h4><p>Thème <b>${THEMES[MAP[acts[0]].t].n} · ${THEMES[MAP[acts[0]].t].name}</b></p></div>`;
+  else html = `<div class="cdetail"><div class="k">${STAGES[i]}</div><h4>${acts.length===1 ? 'Une de vos priorités agit ici.' : acts.length + ' de vos priorités agissent ici.'}</h4><p>${acts.map(id => `<b>${picked.indexOf(id)+1} · ${SHORT[id]}&nbsp;:</b> ${say(id)}`).join('<br>')}</p></div>`;
+  $('#cdetail').innerHTML = html;
+}
+
+function paintWhise(ids, k){
+  if(k === -1){
+    const st = new Set(ids.flatMap(stagesOf)), th = new Set(ids.map(id => MAP[id].t));
+    $('#cwhise').innerHTML = `<div class="k">Vue d’ensemble</div>
+      <div class="promise">Vos ${ids.length} priorités, ${st.size} étapes de votre parcours, ${th.size} thèmes WHISE sur 7. Une seule plateforme.</div>
+      <div class="ovl">${ids.map((id,n) => { const p = PAINS.find(x=>x.id===id); return `<button data-k="${n}"><span class="pn">${n+1}</span><span><b>${p.q}</b><span>${p.promise}</span></span></button>`; }).join('')}</div>`;
+    $('#cwhise').querySelectorAll('.ovl button').forEach(b => b.onclick = () => go(+b.dataset.k));
+    return;
+  }
+  const p = PAINS.find(x=>x.id===ids[0]);
+  $('#cwhise').innerHTML = `<div class="k">Priorité ${k+1} · ${p.q}</div>
+    <div class="promise">${p.promise}</div>
+    <ul>${p.how.map(h=>`<li>${h}</li>`).join('')}</ul>
+    <div class="foot">${demoLink(p)}<span class="note pres"><b>À montrer :</b> ${p.show}${p.check?` <b style="color:var(--c2)">· ${p.check}</b>`:''}</span></div>`;
+}
+
+function paintThemes(ids){
+  const used = new Set(ids.map(id => MAP[id].t));
+  const show = selTheme ?? MAP[ids[0]].t;
+  $('#tgrid').innerHTML = THEMES.map((t,i) => `<button class="tile${used.has(i)?' on':''}${i===show?' sel':''}" data-t="${i}"><b>${t.n}</b><span>${t.name}</span></button>`).join('');
+  $('#tusp').innerHTML = `<b>${THEMES[show].n} · ${THEMES[show].name}&nbsp;:</b> ${THEMES[show].usp}${used.has(show) ? '' : ' <span style="color:var(--fg3)">(hors de vos priorités, également inclus dans WHISE)</span>'}`;
+  $('#tgrid').querySelectorAll('.tile').forEach(b => b.onclick = () => { selTheme = +b.dataset.t; paintThemes(ids); });
+}
+
+document.addEventListener('keydown', e => {
+  if($('#results').style.display !== 'block') return;
+  if(e.key === 'ArrowRight') step(1); if(e.key === 'ArrowLeft') step(-1);
+});
+
+function renderNetwork(){
   $('#networkBlock').innerHTML = seg==='reseau' ? `<div class="network">
       <h3>Groupes et réseaux&nbsp;: standardisez vos processus, <span class="gtext">préservez l’autonomie de chaque agence.</span></h3>
       <div class="g">
@@ -656,7 +841,7 @@ function show(step){
   $('#mand').style.display = mand?'block':'none';
   $('#bar').classList.toggle('show', !res && !mand && picked.length>0);
   $('#resetTop').hidden = !res && !mand && picked.length===0 && !seg;
-  if(res){ renderResults(); const code = currentRef(); $('#rref').textContent = code; $('#rref2').textContent = code; drawQR($('#rqr'), noteUrl(code)); }
+  if(res){ renderResults(); renderNetwork(); const code = currentRef(); $('#rref').textContent = code; $('#rref2').textContent = code; drawQR($('#rqr'), noteUrl(code)); }
   if(mand) renderMand();
   window.scrollTo({top:0,behavior:'smooth'});
 }
