@@ -256,7 +256,7 @@ header img{height:30px}
 @media (prefers-reduced-motion:reduce){.track .fill,.track .car{transition:none}.track .st.on .dot,.track.go .st.on .dot,.steps li{animation:none;opacity:1;transform:scale(1.15)}}
 
 /* results: compact QR strip */
-.rstrip{margin-top:26px;border-radius:22px;background:var(--black);color:#fff;padding:18px 22px;display:grid;grid-template-columns:auto 1fr auto;gap:22px;align-items:center}
+.rstrip{margin-top:22px;border-radius:22px;background:var(--black);color:#fff;padding:18px 22px;display:grid;grid-template-columns:auto 1fr auto;gap:22px;align-items:center}
 .rstrip .qrbox{padding:8px;border-radius:12px}
 .rstrip .qrbox img,.rstrip .qrbox canvas{width:118px;height:118px}
 .rs-text h2{margin-top:6px;font-weight:300;font-size:clamp(22px,2.6vw,32px);line-height:1.1;letter-spacing:-.02em}
@@ -344,6 +344,21 @@ header img{height:30px}
 @media (max-width:640px){.ctrack .cst:not(.on) .nm{visibility:hidden}.cst .nm{font-size:10px}.cst .dot{width:22px;height:22px}.ctrack .rail,.ctrack .fill{top:46px}.cbody{padding:16px}.tgrid{grid-template-columns:repeat(2,1fr)}.cdetail{grid-template-columns:1fr}.cdetail .k{grid-row:auto}.rstrip{grid-template-columns:1fr}.ptab{flex:none;min-width:0;padding:12px 14px}.ptab .pt small{display:none}.ptab .pt b{font-size:14px;white-space:nowrap}}
 @media (prefers-reduced-motion:reduce){.ctrack .cst.on .dot,.ctrack.go .cst.on .dot{animation:none;opacity:1;transform:none}.cdetail{animation:none}}
 
+/* welcome step */
+#welcome{display:none;padding:40px 0 60px}
+.wgrid{display:grid;grid-template-columns:1fr 480px;gap:40px;align-items:start}
+.wtext h1{margin-top:12px;font-weight:300;font-size:clamp(32px,4.2vw,52px);line-height:1.06;letter-spacing:-.03em}
+.wtext h1 b{font-weight:800}
+.wtext p{margin-top:14px;font-size:18px;line-height:1.5;color:var(--fg2);max-width:520px}
+.wcard{border:1.5px solid var(--line);border-radius:22px;padding:24px;display:grid;gap:12px;box-shadow:0 20px 40px -28px rgba(12,19,23,.35)}
+.wcard .send{justify-self:stretch;text-align:center}
+#wskip{justify-self:center;font-size:13px}
+body.presenter #wskip.pres{display:inline-flex}
+@media (max-width:900px){.wgrid{grid-template-columns:1fr}}
+.rhead2{padding-top:30px}
+.rhead2 h2{margin-top:10px;font-weight:300;font-size:clamp(28px,3.6vw,44px);line-height:1.08;letter-spacing:-.03em}
+.rhead2 h2 b{font-weight:800}
+
 /* presenter mode (toggle with the P key or the corner button) */
 .pres{display:none}
 body.presenter .pres{display:block}
@@ -370,6 +385,20 @@ body.presenter .prestoggle{opacity:.8}
   </div>
 </div></header>
 
+<!-- STEP 0 · welcome: the team captures name, e-mail and agency before anything else -->
+<main id="welcome"><div class="wrap wgrid">
+  <div class="wtext">
+    <div class="tag">RENT 2026 · Paris</div>
+    <h1>Bienvenue sur le stand <b class="gtext">WHISE.</b></h1>
+    <p>Avant de commencer, vos coordonnées&nbsp;: nous vous envoyons ensuite le récapitulatif de votre parcours.</p>
+    <div class="staff"><b>Équipe WHISE&nbsp;:</b> remplissez avec le visiteur. Touchez le micro du clavier pour dicter le nom et l’agence.</div>
+  </div>
+  <div class="wcard">
+    <div id="welcomeBox"></div>
+    <button class="ghost pres" id="wskip" type="button">Le visiteur refuse · continuer sans coordonnées</button>
+  </div>
+</div></main>
+
 <!-- STEP 1 · choose -->
 <main id="pick">
   <section class="hero"><div class="wrap">
@@ -388,21 +417,21 @@ body.presenter .prestoggle{opacity:.8}
 
 <!-- STEP 2 · answers -->
 <main id="results"><div class="wrap">
+  <div class="rhead2">
+    <div class="tag">Vos priorités</div>
+    <h2>Votre parcours commercial, <b class="gtext">avec WHISE.</b></h2>
+  </div>
+  <section class="circuit" id="circuit" aria-label="Où WHISE agit dans votre parcours"></section>
+  <div id="networkBlock"></div>
   <div class="rstrip">
     <div class="qrbox" id="rqr"></div>
     <div class="rs-text">
-      <div class="tag" style="color:var(--c5)">Vos priorités · RENT 2026</div>
-      <h2>Votre parcours commercial, <b class="gtext">avec WHISE.</b></h2>
-      <p>Scannez le QR code&nbsp;: vous gardez ce récapitulatif sur votre téléphone et notre équipe France vous recontacte.</p>
+      <div class="tag" style="color:var(--c5)">Après la démo</div>
+      <h2>Gardez ce parcours <b class="gtext">sur votre téléphone.</b></h2>
+      <p>Scannez le QR code&nbsp;: vous retrouvez vos priorités, les étapes où WHISE agit et le contact de notre équipe France.</p>
     </div>
-    <div class="rs-side">
-      <div class="ref">Code<b id="rref"></b></div>
-      <button class="lightbtn leadbtn" hidden>Pas de téléphone&nbsp;?</button>
-    </div>
+    <div class="rs-side"><div class="ref">Code<b id="rref"></b></div></div>
   </div>
-  <div class="staff"><b>Équipe WHISE&nbsp;:</b> faites scanner le QR code au visiteur, scannez son badge avec l’application exposant RENT et ajoutez le code <b id="rref2"></b> en note.</div>
-  <section class="circuit" id="circuit" aria-label="Où WHISE agit dans votre parcours"></section>
-  <div id="networkBlock"></div>
   <div class="close">
     <div>
       <h3>Allons plus loin, <b>sur vos propres cas.</b></h3>
@@ -430,9 +459,8 @@ body.presenter .prestoggle{opacity:.8}
       <div class="ref">Code de votre sélection<b id="mref">M-</b></div>
     </div>
   </div>
-  <div class="staff"><b>Équipe WHISE&nbsp;:</b> scannez le badge du visiteur avec l’application exposant RENT et ajoutez le code <b id="mref2"></b> en note.</div>
+  <div class="staff"><b>Équipe WHISE&nbsp;:</b> coordonnées enregistrées à l’accueil, sélection liée au code <b id="mref2"></b>.</div>
   <div class="racts">
-    <button class="cta leadbtn" hidden>Pas de téléphone&nbsp;? Laissez vos coordonnées ici</button>
     <button class="ghost" id="mback">← Modifier mes priorités</button>
     <button class="ghost" id="mreset">Nouveau visiteur</button>
   </div>
@@ -585,16 +613,15 @@ const refOf = (ids, sk, v) => (sk||'x').toUpperCase() + '-' + letters(ids) + (v 
 const codeOf = ids => refOf(ids, 'm');
 const idsOf = letters => letters.toUpperCase().split('').map(l=>Object.keys(LETTER).find(k=>LETTER[k]===l)).filter(Boolean);
 
-/* The 7 WHISE themes (offering master "WHISE new offering_final 07082025.xlsx",
-   names as in the RENT brochure V5) and the agency's commercial journey. */
+/* The 7 WHISE themes: official French names and promises (validated by Serge, 20 Oct 2026) and the agency's commercial journey. */
 const THEMES = [
-  {n:'01', name:'Visibilité', usp:'Communiquez efficacement, convertissez plus avec moins d’effort et de budget.'},
-  {n:'02', name:'Animation de votre base contacts', usp:'Accompagnez vos prospects vers la conversion de manière automatisée.'},
-  {n:'03', name:'Connaissance du marché', usp:'Accédez à une transparence en temps réel sur l’offre, la demande et les tendances.'},
-  {n:'04', name:'Transaction sécurisée', usp:'Gérez vos transactions sans faille pour une expérience client optimale.'},
-  {n:'05', name:'Conformité intégrée', usp:'Centralisez et gérez vos documents et vos obligations dans un seul outil.'},
-  {n:'06', name:'Pilotage', usp:'Appuyez vos décisions sur les données et comparez vos performances à chaque étape.'},
-  {n:'07', name:'Accompagnement', usp:'Nos experts vous accompagnent pour accélérer votre développement.'}
+  {n:'01', name:'Visibilité', usp:'Organisez une communication ciblée et efficace.'},
+  {n:'02', name:'Traitement des leads', usp:'Optimisez le traitement de vos leads pour plus d’efficacité.'},
+  {n:'03', name:'Insights marché', usp:'Accédez à une intelligence de marché en temps réel.'},
+  {n:'04', name:'Gestion des transactions', usp:'Réalisez des transactions sans faille.'},
+  {n:'05', name:'Gestion documentaire', usp:'Gérez vos documents depuis une seule plateforme fluide.'},
+  {n:'06', name:'KPIs & insights', usp:'Prenez des décisions basées sur les données grâce à des insights de performance en temps réel.'},
+  {n:'07', name:'Service & conseil', usp:'Accélérez votre croissance immobilière avec l’aide d’experts.'}
 ];
 const STAGES = ['Mise en route','Diffusion','Contact','Qualification','Suivi & relances','Visites','Mandat & offre','Compromis & acte','Fidélisation'];
 /* Per pain point: its WHISE theme (index in THEMES), the theme's promise (offering master, FR USP),
@@ -622,7 +649,7 @@ const pos = i => ((i + .5) / STAGES.length * 100).toFixed(2) + '%';
 function themeHTML(id){
   const m = MAP[id];
   return `<div class="themes"><span class="lbl">Thème WHISE</span>${THEMES.map((t,i) => `<i class="${i===m.t?'on':''}"><b>${t.n}</b>${t.name}</i>`).join('')}</div>
-    <p class="tusp"><b>${THEMES[m.t].n} · ${THEMES[m.t].name}&nbsp;:</b> ${m.usp}</p>`;
+    <p class="tusp"><b>${THEMES[m.t].n} · ${THEMES[m.t].name}&nbsp;:</b> ${THEMES[m.t].usp}</p>`;
 }
 function journeyHTML(id){
   const m = MAP[id], at = Object.keys(m.at).map(Number).sort((a,b)=>a-b);
@@ -836,18 +863,16 @@ function renderMand(){
 
 function show(step){
   const res = step==='results', mand = step==='mand';
-  $('#pick').style.display = (res||mand)?'none':'block';
-  $('#results').style.display = res?'block':'none';
-  $('#mand').style.display = mand?'block':'none';
-  $('#bar').classList.toggle('show', !res && !mand && picked.length>0);
-  $('#resetTop').hidden = !res && !mand && picked.length===0 && !seg;
-  if(res){ renderResults(); renderNetwork(); const code = currentRef(); $('#rref').textContent = code; $('#rref2').textContent = code; drawQR($('#rqr'), noteUrl(code)); }
+  ['welcome','pick','results','mand'].forEach(k => $('#'+k).style.display = k===step ? 'block' : 'none');
+  $('#bar').classList.toggle('show', step==='pick' && picked.length>0);
+  $('#resetTop').hidden = step==='welcome' || (step==='pick' && picked.length===0 && !seg);
+  if(res){ renderResults(); renderNetwork(); const code = currentRef(); $('#rref').textContent = code; drawQR($('#rqr'), noteUrl(code)); }
   if(mand) renderMand();
   window.scrollTo({top:0,behavior:'smooth'});
 }
-function reset(){closeSheet();visit=newVisit();picked=[];seg=null;document.querySelectorAll('.chip').forEach(x=>x.setAttribute('aria-pressed','false'));renderGrid();show('pick');$('#resetTop').hidden=true}
+function reset(){closeSheet();visit=newVisit();picked=[];seg=null;document.querySelectorAll('.chip').forEach(x=>x.setAttribute('aria-pressed','false'));renderGrid();renderWelcome();show(LEADS?'welcome':'pick');$('#resetTop').hidden=true}
 
-$('#go').onclick = () => show(seg==='mandataire' ? 'mand' : 'results');
+$('#go').onclick = () => { saveSelection(); show(seg==='mandataire' ? 'mand' : 'results'); };
 $('#mback').onclick = () => show('pick');
 $('#mreset').onclick = reset;
 $('#back').onclick = () => show('pick');
@@ -866,7 +891,7 @@ function noteText(ids, ref){
   let t = 'WHISE · Proposition pour notre réseau / notre agence\n\n';
   ids.forEach(id => { const p = PAINS.find(x=>x.id===id);
     const m = MAP[id], th = THEMES[m.t];
-    t += '• ' + p.q + '\n  Thème WHISE ' + th.n + ' · ' + th.name + ' : ' + strip(m.usp) + '\n' + strip(p.promise) + '\n' + p.how.map(h=>'  - '+strip(h)).join('\n')
+    t += '• ' + p.q + '\n  Thème WHISE ' + th.n + ' · ' + th.name + ' : ' + strip(th.usp) + '\n' + strip(p.promise) + '\n' + p.how.map(h=>'  - '+strip(h)).join('\n')
       + '\n  Où WHISE agit : ' + (m.overlay ? strip(m.overlay) : Object.keys(m.at).map(Number).sort((a,b)=>a-b).map(i => STAGES[i]).join(' → '))
       + '\n  Pour la direction : ' + strip(GAIN[id]) + '\n\n'; });
   t += 'Pour la direction : vue consolidée par agence et par région, droits par rôle, déploiement accompagné, accès API et IA tracés sous le contrôle du siège.\n\n';
@@ -904,30 +929,28 @@ const LEADS = window.WHISE_LEADS && window.WHISE_LEADS.projectId && window.WHISE
 const CONSENT_TEXT = 'J’accepte que WHISE utilise ces informations pour me recontacter au sujet de ma demande à RENT 2026. Je peux retirer mon consentement à tout moment.';
 const QUEUE_KEY = 'whise-rent-queue';
 
-function leadFormHTML(prefix){
+function leadFormHTML(prefix, o={}){
   const priv = LEADS && LEADS.privacyUrl ? ` <a href="${LEADS.privacyUrl}" target="_blank" rel="noopener">Politique de confidentialité</a>` : '';
   return `<form class="leadform" id="${prefix}Form" novalidate>
     <div class="field"><label for="${prefix}Name">Nom et prénom</label><input id="${prefix}Name" name="name" autocomplete="name" required maxlength="120"></div>
     <div class="field"><label for="${prefix}Email">E-mail professionnel</label><input id="${prefix}Email" name="email" type="email" inputmode="email" autocomplete="email" autocapitalize="off" spellcheck="false" required maxlength="160"></div>
-    <div class="field"><label for="${prefix}Company">Agence ou réseau</label><input id="${prefix}Company" name="company" autocomplete="organization" maxlength="160"></div>
-    <div class="field"><label for="${prefix}Phone">Téléphone (facultatif)</label><input id="${prefix}Phone" name="phone" type="tel" autocomplete="tel" maxlength="40"></div>
+    <div class="field"><label for="${prefix}Company">Agence ou réseau</label><input id="${prefix}Company" name="company" autocomplete="organization" maxlength="160"${o.company?' required':''}></div>
+    ${o.phone===false ? '' : `<div class="field"><label for="${prefix}Phone">Téléphone (facultatif)</label><input id="${prefix}Phone" name="phone" type="tel" autocomplete="tel" maxlength="40"></div>`}
     <div class="hp" aria-hidden="true"><label for="${prefix}Web">Site web</label><input id="${prefix}Web" name="website" tabindex="-1" autocomplete="off"></div>
     <label class="consent"><input type="checkbox" id="${prefix}Consent" name="consent" required><span>${CONSENT_TEXT}${priv}</span></label>
-    <button class="send" type="submit">Envoyer</button>
+    <button class="send" type="submit">${o.button || 'Envoyer'}</button>
     <div class="msg" id="${prefix}Msg" aria-live="polite"></div>
   </form>`;
 }
 
 function randomId(){ try{ return crypto.randomUUID().replace(/-/g,''); }catch(e){ return Date.now().toString(36) + Math.random().toString(36).slice(2,12); } }
 
-async function postLead(lead){
+const S = v => ({stringValue: String(v||'')});
+const LIST = a => ({arrayValue:{values:a.map(S)}});
+async function postDoc(collection, id, fields){
   const base = `projects/${LEADS.projectId}/databases/(default)/documents`;
-  const S = v => ({stringValue: String(v||'')});
   const body = {writes:[{
-    update:{name:`${base}/leads/${lead.id}`, fields:{
-      name:S(lead.name), email:S(lead.email), company:S(lead.company), phone:S(lead.phone),
-      segment:S(lead.segment), painpoints:{arrayValue:{values:lead.painpoints.map(S)}},
-      ref:S(lead.ref), source:S(lead.source), consent:{booleanValue:true}, consentText:S(CONSENT_TEXT)}},
+    update:{name:`${base}/${collection}/${id}`, fields},
     updateTransforms:[{fieldPath:'createdAt', setToServerValue:'REQUEST_TIME'}],
     currentDocument:{exists:false}}]};
   const r = await fetch(`https://firestore.googleapis.com/v1/${base}:commit?key=${encodeURIComponent(LEADS.apiKey)}`,
@@ -935,13 +958,24 @@ async function postLead(lead){
   if(r.status === 409) return; // already stored by an earlier retry
   if(!r.ok){ const e = new Error('rejected ' + r.status); e.rejected = true; throw e; }
 }
+const postLead = lead => postDoc('leads', lead.id, {
+  name:S(lead.name), email:S(lead.email), company:S(lead.company), phone:S(lead.phone),
+  segment:S(lead.segment), painpoints:LIST(lead.painpoints), ref:S(lead.ref), source:S(lead.source),
+  consent:{booleanValue:true}, consentText:S(CONSENT_TEXT)});
+/* The visitor's choices, linked to the contact by the visit id. No personal data. */
+const postSelection = x => postDoc('selections', x.id, {visit:S(x.visit), ref:S(x.ref), segment:S(x.segment), painpoints:LIST(x.painpoints)});
+function saveSelection(){
+  if(!LEADS || !picked.length) return;
+  const x = {kind:'sel', id:randomId(), visit, ref:currentRef(), segment:SEG_KEY[seg]||'x', painpoints:picked.slice()};
+  postSelection(x).catch(e => { if(!e.rejected){ const q = readQueue(); q.push(x); writeQueue(q); } });
+}
 
 function readQueue(){ try{ return JSON.parse(localStorage.getItem(QUEUE_KEY) || '[]'); }catch(e){ return []; } }
 function writeQueue(q){ try{ localStorage.setItem(QUEUE_KEY, JSON.stringify(q)); }catch(e){} }
 async function flushQueue(){
   if(!LEADS) return; const q = readQueue(); if(!q.length) return;
   const left = [];
-  for(const lead of q){ try{ await postLead(lead); }catch(e){ if(!e.rejected) left.push(lead); } }
+  for(const x of q){ try{ await (x.kind==='sel' ? postSelection(x) : postLead(x)); }catch(e){ if(!e.rejected) left.push(x); } }
   writeQueue(left);
 }
 
@@ -954,8 +988,9 @@ function wireLeadForm(prefix, ctx, onDone){
     if(v('website')){ msg.className='msg ok'; msg.textContent='Merci.'; return; }
     if(v('name').length < 2){ msg.className='msg err'; msg.textContent='Indiquez votre nom et prénom.'; f.elements.name.focus(); return; }
     if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v('email'))){ msg.className='msg err'; msg.textContent='Vérifiez votre adresse e-mail.'; f.elements.email.focus(); return; }
+    if(ctx.company && v('company').length < 2){ msg.className='msg err'; msg.textContent='Indiquez le nom de l’agence ou du réseau.'; f.elements.company.focus(); return; }
     if(!f.elements.consent.checked){ msg.className='msg err'; msg.textContent='Cochez la case de consentement pour envoyer vos coordonnées.'; return; }
-    const lead = {id:randomId(), name:v('name'), email:v('email').toLowerCase(), company:v('company'), phone:v('phone'),
+    const lead = {id:randomId(), name:v('name'), email:v('email').toLowerCase(), company:v('company'), phone:f.elements.phone ? v('phone') : '',
       segment:ctx.segment, painpoints:ctx.ids, ref:ctx.ref, source:ctx.source};
     const btn = f.querySelector('.send'); btn.disabled = true; msg.textContent = 'Envoi…';
     try{
@@ -975,6 +1010,14 @@ function wireLeadForm(prefix, ctx, onDone){
     }finally{ btn.disabled = false; }
   });
 }
+
+/* Welcome: mandatory contact step on the booth iPad */
+function renderWelcome(){
+  if(!LEADS) return;
+  $('#welcomeBox').innerHTML = leadFormHTML('welcome', {phone:false, company:true, button:'Commencer →'});
+  wireLeadForm('welcome', {segment:'x', ids:[], ref:visit, source:'ipad', company:true}, () => setTimeout(() => show('pick'), 600));
+}
+$('#wskip').onclick = () => show('pick');
 
 /* iPad fallback sheet */
 function openSheet(){
@@ -999,7 +1042,6 @@ function renderNote(ids, sk, ref){
   n.innerHTML = `<img class="logo" src="${document.querySelector('header img').src}" alt="WHISE">
     <h1>${c.h1}</h1>
     <p class="intro">${c.intro}</p>
-    ${LEADS ? `<section class="lead"><h2>Recevez ce récapitulatif <b>et un rendez-vous.</b></h2><p class="sub">20 secondes&nbsp;: notre équipe France vous recontacte pour une démonstration sur vos propres cas.</p>${leadFormHTML('phone')}</section>` : ''}
     ${ids.map(id => { const p = PAINS.find(x=>x.id===id); return `<section class="nitem">
       <div class="top"><h2>${p.q}</h2><p>${p.ctx}</p></div>
       <div class="body"><div class="k">Avec WHISE</div><ul>${p.how.map(h=>`<li>${h}</li>`).join('')}</ul>
@@ -1018,7 +1060,6 @@ function renderNote(ids, sk, ref){
   const who = sk==='m' ? 'à votre directeur' : 'à vos collègues';
   $('#copyLink').onclick = () => copy(noteUrl(ref), `Lien copié. Collez-le dans un message ${who}.`);
   $('#copyText').onclick = () => copy(noteText(ids, ref), `Texte copié. Collez-le dans un e-mail ${who}.`);
-  if(LEADS) wireLeadForm('phone', {segment:sk, ids, ref, source:'phone'});
   /* run each journey when it scrolls into view */
   const io = 'IntersectionObserver' in window ? new IntersectionObserver(es => es.forEach(e => { if(e.isIntersecting){ runTracks(e.target); io.unobserve(e.target); } }), {threshold:.4}) : null;
   n.querySelectorAll('.nitem .jr').forEach(j => io ? io.observe(j) : runTracks(j));
@@ -1033,6 +1074,7 @@ let idle; const kick = () => { if(NOTE_MODE) return; clearTimeout(idle); idle = 
 kick();
 
 renderGrid();
+if(!NOTE_MODE){ renderWelcome(); show(LEADS ? 'welcome' : 'pick'); }
 </script>
 <script>if("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(()=>{});</script>
 </body>

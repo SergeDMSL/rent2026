@@ -1,6 +1,6 @@
 rules_version = '2';
 // RENT 2026 lead capture.
-// Visitors (no login) may only CREATE a well-formed lead. Nobody can list, read,
+// Visitors (no login) may only CREATE a well-formed lead or selection. Nobody can list, read,
 // change or delete leads from the site. Only the admins below can read them,
 // after signing in on /export.html with an e-mail link.
 service cloud.firestore {
@@ -34,7 +34,6 @@ service cloud.firestore {
         && text(request.resource.data.phone, 0, 40)
         && request.resource.data.segment in ['m', 'a', 'r', 'x']
         && request.resource.data.painpoints is list
-        && request.resource.data.painpoints.size() >= 1
         && request.resource.data.painpoints.size() <= 3
         && request.resource.data.painpoints.hasOnly(['relance','reactivite','base','admin','terrain','conformite','pilotage','migration'])
         && text(request.resource.data.ref, 4, 20)
@@ -43,6 +42,23 @@ service cloud.firestore {
         && text(request.resource.data.consentText, 20, 600)
         && request.resource.data.createdAt == request.time;
 
+      allow update, delete: if false;
+    }
+
+    // The visitor's choices, linked to the lead by the visit id. No personal data.
+    match /selections/{selectionId} {
+      allow read: if isAdmin();
+      allow create: if
+        request.resource.data.keys().hasOnly(['visit','ref','segment','painpoints','createdAt'])
+        && request.resource.data.keys().hasAll(['visit','ref','segment','painpoints','createdAt'])
+        && text(request.resource.data.visit, 4, 8)
+        && text(request.resource.data.ref, 4, 20)
+        && request.resource.data.segment in ['m', 'a', 'r', 'x']
+        && request.resource.data.painpoints is list
+        && request.resource.data.painpoints.size() >= 1
+        && request.resource.data.painpoints.size() <= 3
+        && request.resource.data.painpoints.hasOnly(['relance','reactivite','base','admin','terrain','conformite','pilotage','migration'])
+        && request.resource.data.createdAt == request.time;
       allow update, delete: if false;
     }
 

@@ -24,11 +24,13 @@ Accessibility) to lock the iPad to the app at the booth.
 ## Lead capture (Firestore, EU)
 Each visit gets a code such as `A-ACD-K7P2` (profile · pain points · visit id).
 - The iPad shows it next to the QR code; sales adds it as a note to the badge scan.
-- On their phone, the visitor can leave name, e-mail, agency and phone (autofill).
-  No phone? "Pas de téléphone ?" opens the same form on the iPad (dictation via the
-  keyboard microphone). If the hall Wi-Fi is down, iPad entries wait on the device and
-  are sent automatically when it is back online.
-- Every lead is stored with its code, profile, pain points, consent text and server time.
+- Step 1 on the iPad is mandatory: the team enters name, e-mail and agency (dictation via
+  the keyboard microphone) with the visitor's consent. The lead is stored at once
+  (`leads`, ref = visit id). A visitor who refuses: presenter mode (P) shows a skip link.
+- When the visitor sees their answers, their choices are stored in `selections`
+  (visit id, code, profile, pain points; no personal data). `/export.html` joins both.
+- If the hall Wi-Fi is down, entries wait on the iPad and are sent once it is back online.
+- The QR strip at the bottom of the results gives the visitor the summary on their phone.
 
 Forms stay hidden until `config.js` is filled in.
 
