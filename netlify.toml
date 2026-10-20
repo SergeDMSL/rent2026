@@ -17,3 +17,15 @@
   for = "/manifest.webmanifest"
   [headers.values]
     Content-Type = "application/manifest+json"
+
+# Repo-only files: not served on the site
+[[redirects]]
+  from = "/firestore.rules"
+  to = "/404"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/README.md"
+  to = "/404"
+  status = 404
+  force = true
