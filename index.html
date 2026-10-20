@@ -1012,7 +1012,7 @@ function writeQueue(q){ try{ localStorage.setItem(QUEUE_KEY, JSON.stringify(q));
 async function flushQueue(){
   if(!LEADS) return; const q = readQueue(); if(!q.length) return;
   const left = [];
-  for(const x of q){ try{ await (x.kind==='sel' ? postSelection(x) : x.kind==='note' ? postNote(x) : postLead(x)); }catch(e){ if(!e.rejected) left.push(x); } }
+  for(const x of q){ try{ await (x.kind==='sel' ? postSelection(x) : x.kind==='note' ? postNote(x) : postLead(x)); }catch(e){ if(!e.rejected || x.kind==='note') left.push(x); } }
   writeQueue(left);
 }
 
@@ -1078,8 +1078,9 @@ $('#noteSave').onclick = async () => {
   $('#noteSave').disabled = true;
   try{ await postNote(x); done('Note enregistrée.'); }
   catch(e){
-    if(!e.rejected){ const q = readQueue(); q.push(x); writeQueue(q); done('Note gardée sur l’iPad, envoi dès le retour du réseau.'); }
-    else { msg.className = 'msg err'; msg.textContent = 'Note refusée. Raccourcissez-la et réessayez.'; }
+    /* never lose a note: keep it on the iPad and retry (network down, or server rules not yet updated) */
+    const q = readQueue(); q.push(x); writeQueue(q);
+    done(e.rejected ? 'Note gardée sur l’iPad : le serveur l’a refusée (règles Firebase à vérifier). Nouvel essai automatique.' : 'Note gardée sur l’iPad, envoi dès le retour du réseau.');
   } finally { $('#noteSave').disabled = false; }
 };
 
