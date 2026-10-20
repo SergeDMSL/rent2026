@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>WHISE RENT · Leads</title>
+<style>
+@font-face{font-family:Montserrat;font-weight:500;src:url(fonts/Montserrat-Medium.ttf)}
+@font-face{font-family:Montserrat;font-weight:800;src:url(fonts/Montserrat-ExtraBold.ttf)}
+:root{--black:#0C1317;--fg2:#404A52;--fg3:#6B747B;--line:#E6E3E1;--soft:#F7F4F2;--c2:#DC2550;
+  --warm-d:linear-gradient(135deg,#FF9B3A,#FD7537 25%,#F94836 50%,#DC2550 75%,#9E226B)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#fff;color:var(--black);font-family:Montserrat,system-ui,sans-serif;font-weight:500;padding:28px 16px 60px}
+.wrap{max-width:1200px;margin:0 auto;display:grid;gap:18px}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+header img{height:28px}
+h1{font-size:28px;font-weight:800;letter-spacing:-.02em}
+p{color:var(--fg2);line-height:1.5}
+.card{border:1.5px solid var(--line);border-radius:18px;padding:20px;display:grid;gap:12px;max-width:520px}
+label{font-size:13px;font-weight:800}
+input{font:inherit;font-size:16px;padding:12px 14px;border-radius:12px;border:1.5px solid #D6D0CC;width:100%}
+button{font:inherit;font-weight:800;font-size:15px;padding:12px 20px;border-radius:99px;border:0;cursor:pointer;background:var(--black);color:#fff;justify-self:start}
+button.warm{background:var(--warm-d)}
+button.ghost{background:#fff;color:var(--black);border:1.5px solid var(--line)}
+.msg{font-size:14px;color:var(--fg2)}
+.msg.err{color:var(--c2)}
+.bar{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.stats{display:flex;gap:10px;flex-wrap:wrap}
+.stat{background:var(--soft);border-radius:14px;padding:12px 16px;font-size:13px;color:var(--fg2)}
+.stat b{display:block;font-size:22px;color:var(--black);font-variant-numeric:tabular-nums}
+.tbl{overflow-x:auto;border:1.5px solid var(--line);border-radius:14px}
+table{border-collapse:collapse;width:100%;font-size:13px}
+th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top;white-space:nowrap}
+th{background:var(--soft);font-weight:800}
+td.wrap{white-space:normal;min-width:220px}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header><img src="assets/lockup_primary.png" alt="WHISE"><span class="msg" id="who"></span></header>
+  <h1>Leads RENT 2026</h1>
+
+  <section class="card" id="login" hidden>
+    <p>Accès réservé à l’équipe WHISE. Saisissez votre e-mail&nbsp;: vous recevez un lien de connexion.</p>
+    <label for="email">E-mail WHISE</label>
+    <input id="email" type="email" autocomplete="email">
+    <button id="send">Recevoir le lien</button>
+    <div class="msg" id="loginMsg" aria-live="polite"></div>
+  </section>
+
+  <section id="data" hidden>
+    <div class="bar">
+      <button class="warm" id="csv">Télécharger le CSV (Excel)</button>
+      <button class="ghost" id="reload">Actualiser</button>
+      <button class="ghost" id="out">Se déconnecter</button>
+    </div>
+    <div class="stats" id="stats" style="margin-top:14px"></div>
+    <div class="tbl" style="margin-top:14px"><table id="tbl"></table></div>
+  </section>
+  <div class="msg" id="msg" aria-live="polite"></div>
+</div>
+
+<script src="config.js"></script>
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+import { getAuth, sendSignInLinkToEmail, isSignInWithEmailLink, signInWithEmailLink, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+import { getFirestore, collection, getDocs, query, orderBy } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+
+const $ = s => document.querySelector(s);
+const cfg = window.WHISE_LEADS || {};
+if(!cfg.projectId || !cfg.apiKey){ $('#msg').textContent = 'config.js n’est pas encore rempli.'; throw new Error('no config'); }
+
+const app = initializeApp({ apiKey: cfg.apiKey, authDomain: cfg.authDomain || `${cfg.projectId}.firebaseapp.com`, projectId: cfg.projectId });
+const auth = getAuth(app), db = getFirestore(app);
+
+const PAINS = {relance:'Mandats perdus faute de relance', reactivite:'Leads et appels qui attendent', base:'Base de contacts qui dort',
+  admin:'Administratif et ressaisie', terrain:'Ressaisir le soir', conformite:'Pression réglementaire',
+  pilotage:'Pas de vision sur l’équipe', migration:'Peur de changer de logiciel'};
+const SEG = {m:'Mandataire', a:'Agence', r:'Réseau', x:'Non précisé'};
+let rows = [];
+
+if(isSignInWithEmailLink(auth, location.href)){
+  let email = ''; try{ email = localStorage.getItem('whise-export-email') || ''; }catch(e){}
+  if(!email){ $('#login').hidden = false; $('#loginMsg').textContent = 'Saisissez à nouveau votre e-mail pour terminer la connexion.'; $('#send').textContent = 'Se connecter';
+    $('#send').onclick = () => finish($('#email').value.trim()); }
+  else finish(email);
+}
+async function finish(email){
+  try{ await signInWithEmailLink(auth, email, location.href); history.replaceState(null, '', location.pathname); }
+  catch(e){ $('#loginMsg').className = 'msg err'; $('#loginMsg').textContent = 'Lien expiré ou déjà utilisé. Demandez-en un nouveau.'; }
+}
+
+onAuthStateChanged(auth, user => {
+  if(user){ $('#login').hidden = true; $('#data').hidden = false; $('#who').textContent = user.email; load(); }
+  else if(!isSignInWithEmailLink(auth, location.href)){ $('#login').hidden = false; $('#data').hidden = true; $('#who').textContent = ''; }
+});
+
+$('#send').onclick = async () => {
+  const email = $('#email').value.trim();
+  if(!email){ return; }
+  try{
+    await sendSignInLinkToEmail(auth, email, { url: location.origin + location.pathname, handleCodeInApp: true });
+    try{ localStorage.setItem('whise-export-email', email); }catch(e){}
+    $('#loginMsg').className = 'msg'; $('#loginMsg').textContent = 'Lien envoyé. Ouvrez-le sur cet appareil.';
+  }catch(e){ $('#loginMsg').className = 'msg err'; $('#loginMsg').textContent = 'Envoi impossible. Vérifiez l’adresse.'; }
+};
+$('#out').onclick = () => signOut(auth);
+$('#reload').onclick = load;
+
+async function load(){
+  $('#msg').className = 'msg'; $('#msg').textContent = 'Chargement…';
+  try{
+    const snap = await getDocs(query(collection(db, 'leads'), orderBy('createdAt', 'desc')));
+    rows = snap.docs.map(d => { const x = d.data(); return {
+      date: x.createdAt ? x.createdAt.toDate().toLocaleString('fr-FR') : '', name: x.name, email: x.email, company: x.company, phone: x.phone,
+      segment: SEG[x.segment] || x.segment, painpoints: (x.painpoints||[]).map(p => PAINS[p] || p).join(' · '), ref: x.ref, source: x.source === 'ipad' ? 'iPad' : 'Téléphone' }; });
+    render(); $('#msg').textContent = '';
+  }catch(e){ $('#msg').className = 'msg err'; $('#msg').textContent = 'Accès refusé. Votre e-mail doit figurer dans la liste des administrateurs (firestore.rules).'; }
+}
+
+const COLS = [['date','Date'],['name','Nom'],['email','E-mail'],['company','Agence / réseau'],['phone','Téléphone'],['segment','Profil'],['painpoints','Priorités'],['ref','Code'],['source','Source']];
+const esc = v => String(v ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function render(){
+  const by = k => rows.filter(r => r.segment === k).length;
+  $('#stats').innerHTML = `<div class="stat"><b>${rows.length}</b>leads</div>` + ['Agence','Mandataire','Réseau'].map(k => `<div class="stat"><b>${by(k)}</b>${k}</div>`).join('');
+  $('#tbl').innerHTML = `<thead><tr>${COLS.map(c => `<th>${c[1]}</th>`).join('')}</tr></thead><tbody>${rows.map(r =>
+    `<tr>${COLS.map(c => `<td class="${c[0]==='painpoints'?'wrap':''}">${esc(r[c[0]])}</td>`).join('')}</tr>`).join('')}</tbody>`;
+}
+$('#csv').onclick = () => {
+  const q = v => '"' + String(v ?? '').replace(/"/g, '""') + '"';
+  const csv = '﻿' + [COLS.map(c => q(c[1])).join(';'), ...rows.map(r => COLS.map(c => q(r[c[0]])).join(';'))].join('\r\n');
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([csv], {type:'text/csv;charset=utf-8'}));
+  a.download = `leads-rent-2026-${new Date().toISOString().slice(0,10)}.csv`;
+  a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+};
+</script>
+</body>
+</html>

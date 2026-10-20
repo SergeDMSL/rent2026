@@ -1,0 +1,51 @@
+rules_version = '2';
+// RENT 2026 lead capture.
+// Visitors (no login) may only CREATE a well-formed lead. Nobody can list, read,
+// change or delete leads from the site. Only the admins below can read them,
+// after signing in on /export.html with an e-mail link.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isAdmin() {
+      return request.auth != null
+        && request.auth.token.email_verified == true
+        && request.auth.token.email in [
+          'serge.lemmens@whise.eu'
+          // add the France sales team here, e.g. 'gregory.iwes@whise.eu'
+        ];
+    }
+
+    function text(v, min, max) {
+      return v is string && v.size() >= min && v.size() <= max;
+    }
+
+    match /leads/{leadId} {
+      allow read: if isAdmin();
+
+      allow create: if
+        request.resource.data.keys().hasOnly(['name','email','company','phone','segment','painpoints','ref','source','consent','consentText','createdAt'])
+        && request.resource.data.keys().hasAll(['name','email','company','phone','segment','painpoints','ref','source','consent','consentText','createdAt'])
+        && text(request.resource.data.name, 2, 120)
+        && text(request.resource.data.email, 5, 160)
+        && request.resource.data.email.matches('^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$')
+        && text(request.resource.data.company, 0, 160)
+        && text(request.resource.data.phone, 0, 40)
+        && request.resource.data.segment in ['m', 'a', 'r', 'x']
+        && request.resource.data.painpoints is list
+        && request.resource.data.painpoints.size() >= 1
+        && request.resource.data.painpoints.size() <= 3
+        && request.resource.data.painpoints.hasOnly(['relance','reactivite','base','admin','terrain','conformite','pilotage','migration'])
+        && text(request.resource.data.ref, 4, 20)
+        && request.resource.data.source in ['phone', 'ipad']
+        && request.resource.data.consent == true
+        && text(request.resource.data.consentText, 20, 600)
+        && request.resource.data.createdAt == request.time;
+
+      allow update, delete: if false;
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

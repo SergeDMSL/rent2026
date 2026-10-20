@@ -20,3 +20,36 @@ E terrain · F conformité · G pilotage · H changement de logiciel.
 Open the site in Safari → Share → "Sur l'écran d'accueil". It opens full screen and
 keeps working offline after the first visit. Use Guided Access (Settings →
 Accessibility) to lock the iPad to the app at the booth.
+
+## Lead capture (Firestore, EU)
+Each visit gets a code such as `A-ACD-K7P2` (profile · pain points · visit id).
+- The iPad shows it next to the QR code; sales adds it as a note to the badge scan.
+- On their phone, the visitor can leave name, e-mail, agency and phone (autofill).
+  No phone? "Pas de téléphone ?" opens the same form on the iPad (dictation via the
+  keyboard microphone). If the hall Wi-Fi is down, iPad entries wait on the device and
+  are sent automatically when it is back online.
+- Every lead is stored with its code, profile, pain points, consent text and server time.
+
+Forms stay hidden until `config.js` is filled in.
+
+### One-time setup (Firebase console, ~15 min)
+1. console.firebase.google.com → Add project `whise-rent-2026` (Analytics: off).
+2. Build → Firestore Database → Create database → **Production mode** →
+   location **europe-west1 (Belgium)**.
+3. Firestore → Rules → paste `firestore.rules` → Publish. Add the sales team's
+   e-mails to the admin list first.
+4. Build → Authentication → Get started → Sign-in method → **Email/Password** →
+   enable **Email link (passwordless sign-in)**. Settings → Authorized domains → add
+   `whise-rent-2026.netlify.app`.
+5. Project settings → General → Your apps → Web (`</>`) → register `rent-site` →
+   copy `apiKey`, `projectId`, `authDomain` into `config.js`, plus the privacy URL.
+   These values are public identifiers, not secrets; `firestore.rules` protects the data.
+6. Commit, push, and bump `VERSION` in `sw.js`.
+
+### Reading the leads
+Open `/export.html`, enter your WHISE e-mail, click the link you receive. You see the
+table and can download a CSV for Excel. Only e-mails listed in `firestore.rules` can read.
+
+### After RENT
+Delete the leads you no longer need (retention set by legal) and remove the iPad
+demo login.

@@ -171,6 +171,39 @@ header img{height:30px}
 .copied{font-size:13px;color:var(--fg3);align-self:center}
 .nref{margin-top:20px;font-size:12px;color:var(--fg3)}
 
+/* lead capture: QR on the results screen, form on the phone and on the iPad */
+.qrwrap{display:flex;flex-direction:column;align-items:center;gap:10px}
+.qrbox{background:#fff;padding:12px;border-radius:16px;line-height:0}
+.qrbox img,.qrbox canvas{display:block;width:170px;height:170px}
+.rref{font-size:12px;font-variant-numeric:tabular-nums;opacity:.9}
+.rref b{font-size:15px;font-weight:800;letter-spacing:.06em}
+.lightbtn{font-size:15px;font-weight:800;padding:12px 20px;border-radius:99px;background:#fff;color:var(--black)}
+.lead{margin-top:22px;border:1.5px solid var(--line);border-radius:20px;padding:22px 20px;display:grid;gap:14px}
+.lead h2{font-size:21px;font-weight:300;line-height:1.2}
+.lead h2 b{font-weight:800}
+.lead p.sub{font-size:14.5px;line-height:1.5;color:var(--fg2)}
+.field{display:grid;gap:6px}
+.field label{font-size:13px;font-weight:700}
+.field input{font:inherit;font-size:16px;padding:13px 14px;border-radius:12px;border:1.5px solid #D6D0CC;background:#fff;color:var(--black);user-select:text;width:100%}
+.field input:focus{outline:none;border-color:var(--c2);box-shadow:0 0 0 3px rgba(220,37,80,.15)}
+.consent{display:flex;gap:10px;align-items:flex-start;font-size:13px;line-height:1.45;color:var(--fg2)}
+.consent input{margin-top:2px;width:20px;height:20px;flex:none;accent-color:#DC2550}
+.consent a{color:var(--c2)}
+.hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+.send{font-size:16px;font-weight:800;padding:15px 24px;border-radius:99px;background:var(--warm-d);color:#fff;justify-self:start}
+.send:disabled{opacity:.5}
+.msg{font-size:14px;line-height:1.45;min-height:1em}
+.msg.err{color:var(--c2)}
+.msg.ok{color:var(--black);font-weight:700}
+.tip{font-size:12.5px;color:var(--fg3)}
+#sheet{position:fixed;inset:0;z-index:9;background:rgba(12,19,23,.55);display:grid;place-items:center;padding:16px}
+#sheet[hidden]{display:none}
+.leadform{display:grid;gap:14px}
+#sheet .panel{background:#fff;border-radius:22px;width:min(560px,100%);max-height:100%;overflow:auto;padding:26px 24px;display:grid;gap:14px}
+#sheet .panel h2{font-size:22px;font-weight:300;line-height:1.2}
+#sheet .panel h2 b{font-weight:800}
+#sheet .row2{display:flex;gap:10px;flex-wrap:wrap}
+
 /* presenter mode (toggle with the P key or the corner button) */
 .pres{display:none}
 body.presenter .pres{display:block}
@@ -223,15 +256,17 @@ body.presenter .prestoggle{opacity:.8}
   <div id="networkBlock"></div>
   <div class="close">
     <div>
-      <h3>Allons plus loin, <b>sur vos propres cas.</b></h3>
-      <p>Réservez une démonstration personnalisée avec notre équipe France.</p>
+      <h3>Gardez cette sélection, <b>sur votre téléphone.</b></h3>
+      <p>Scannez le QR code&nbsp;: vous recevez ce récapitulatif, et notre équipe France vous recontacte pour une démonstration sur vos propres cas.</p>
       <div class="racts">
+        <button class="lightbtn leadbtn" hidden>Pas de téléphone&nbsp;? Laissez vos coordonnées ici</button>
         <button class="ghost" style="color:#fff;border-color:rgba(255,255,255,.6)" id="back">← Modifier mes priorités</button>
         <button class="ghost" style="color:#fff;border-color:rgba(255,255,255,.6)" id="reset">Nouveau visiteur</button>
       </div>
     </div>
-    <div class="qr" id="qr">QR démo<br>URL à fournir</div>
+    <div class="qrwrap"><div class="qrbox" id="rqr"></div><div class="rref">Code <b id="rref"></b></div></div>
   </div>
+  <div class="staff"><b>Équipe WHISE&nbsp;:</b> scannez le badge du visiteur avec l’application exposant RENT et ajoutez le code <b id="rref2"></b> en note.</div>
 </div></main>
 
 <!-- STEP 2b · mandataire: hand off by QR, no demo -->
@@ -251,12 +286,21 @@ body.presenter .prestoggle{opacity:.8}
   </div>
   <div class="staff"><b>Équipe WHISE&nbsp;:</b> scannez le badge du visiteur avec l’application exposant RENT et ajoutez le code <b id="mref2"></b> en note.</div>
   <div class="racts">
+    <button class="cta leadbtn" hidden>Pas de téléphone&nbsp;? Laissez vos coordonnées ici</button>
     <button class="ghost" id="mback">← Modifier mes priorités</button>
     <button class="ghost" id="mreset">Nouveau visiteur</button>
   </div>
 </div></main>
 
-<!-- PHONE · the note the mandataire forwards to their director -->
+<!-- iPad fallback: the visitor leaves their details on the booth iPad -->
+<div id="sheet" hidden><div class="panel" role="dialog" aria-modal="true" aria-labelledby="sheetTitle">
+  <h2 id="sheetTitle">Restons <b>en contact.</b></h2>
+  <p class="tip">Astuce&nbsp;: touchez le micro du clavier pour dicter votre nom et votre agence.</p>
+  <div id="sheetForm"></div>
+  <div class="row2"><button class="ghost" id="sheetClose">Fermer</button></div>
+</div></div>
+
+<!-- PHONE · the visitor's summary (and, for a mandataire, the note for their director) -->
 <div id="note"></div>
 
 <div class="bar" id="bar"><div class="wrap">
@@ -266,6 +310,7 @@ body.presenter .prestoggle{opacity:.8}
 
 <button class="prestoggle" id="prestoggle" title="Mode présentateur (touche P)">P</button>
 
+<script src="config.js"></script>
 <script src="qrcode.min.js"></script>
 <script>
 /* ============================================================
@@ -384,7 +429,14 @@ const GAIN = {
   pilotage:'Tableaux de bord par agent et par agence, et une vue consolidée par région pour le siège.',
   migration:'Reprise des données, transition planifiée et formation de toutes les agences, avec un interlocuteur WHISE jusqu’à la mise en service.'
 };
-const codeOf = ids => 'M-' + ids.map(i=>LETTER[i]).sort().join('');
+/* Reference code per visit: segment letter, pain point letters, visit id. Example: M-ADH-K7P2.
+   The salesperson adds it as a note to the badge scan; the same code is stored with the lead. */
+const SEG_KEY = {mandataire:'m', agence:'a', reseau:'r'};
+const newVisit = () => { const a='ABCDEFGHJKMNPQRSTUVWXYZ23456789'; let v=''; for(let i=0;i<4;i++) v+=a[Math.floor(Math.random()*a.length)]; return v; };
+let visit = newVisit();
+const letters = ids => ids.map(i=>LETTER[i]).sort().join('');
+const refOf = (ids, sk, v) => (sk||'x').toUpperCase() + '-' + letters(ids) + (v ? '-' + v : '');
+const codeOf = ids => refOf(ids, 'm');
 const idsOf = letters => letters.toUpperCase().split('').map(l=>Object.keys(LETTER).find(k=>LETTER[k]===l)).filter(Boolean);
 
 const SEG_LABEL = {agence:'Agence', mandataire:'Mandataire', reseau:'Réseau'};
@@ -457,15 +509,20 @@ function renderResults(){
       </div></div>` : '';
 }
 
+function drawQR(box, url){
+  box.innerHTML = '';
+  if(window.QRCode) new QRCode(box,{text:url,width:460,height:460,colorDark:'#0C1317',colorLight:'#ffffff',correctLevel:QRCode.CorrectLevel.M});
+  else box.innerHTML = '<div style="width:170px;height:170px;display:grid;place-items:center;font-size:13px;color:#404A52;line-height:1.4;padding:12px">QR indisponible.<br>Connectez l’iPad à Internet.</div>';
+}
+const currentRef = () => refOf(picked, SEG_KEY[seg], visit);
+const noteUrl = ref => NOTE_URL + '#' + ref.toLowerCase();
+
 function renderMand(){
   $('#mpicked').innerHTML = picked.map(id => { const p = PAINS.find(x=>x.id===id);
     return `<div class="row"><span class="ic">${svg(p.icon)}</span><div><h3>${p.q}</h3><p>${p.promise}</p></div></div>`; }).join('');
-  const code = codeOf(picked);
+  const code = currentRef();
   $('#mref').textContent = code; $('#mref2').textContent = code;
-  const url = NOTE_URL + '#' + code.toLowerCase();
-  const box = $('#mqr'); box.innerHTML = '';
-  if(window.QRCode) new QRCode(box,{text:url,width:460,height:460,colorDark:'#0C1317',colorLight:'#ffffff',correctLevel:QRCode.CorrectLevel.M});
-  else box.innerHTML = '<div style="width:230px;height:230px;display:grid;place-items:center;font-size:13px;color:#404A52;line-height:1.4;padding:16px">QR indisponible hors ligne.<br>Connectez l’iPad à Internet.</div>';
+  drawQR($('#mqr'), noteUrl(code));
 }
 
 function show(step){
@@ -475,11 +532,11 @@ function show(step){
   $('#mand').style.display = mand?'block':'none';
   $('#bar').classList.toggle('show', !res && !mand && picked.length>0);
   $('#resetTop').hidden = !res && !mand && picked.length===0 && !seg;
-  if(res) renderResults();
+  if(res){ renderResults(); const code = currentRef(); $('#rref').textContent = code; $('#rref2').textContent = code; drawQR($('#rqr'), noteUrl(code)); }
   if(mand) renderMand();
   window.scrollTo({top:0,behavior:'smooth'});
 }
-function reset(){picked=[];seg=null;document.querySelectorAll('.chip').forEach(x=>x.setAttribute('aria-pressed','false'));renderGrid();show('pick');$('#resetTop').hidden=true}
+function reset(){closeSheet();visit=newVisit();picked=[];seg=null;document.querySelectorAll('.chip').forEach(x=>x.setAttribute('aria-pressed','false'));renderGrid();show('pick');$('#resetTop').hidden=true}
 
 $('#go').onclick = () => show(seg==='mandataire' ? 'mand' : 'results');
 $('#mback').onclick = () => show('pick');
@@ -495,14 +552,14 @@ $('#prestoggle').onclick = togglePres;
 document.addEventListener('keydown', e => { if(e.key==='p'||e.key==='P') togglePres(); });
 
 /* ---------- phone view: NOTE_URL#m-adh ---------- */
-function noteText(ids){
+function noteText(ids, ref){
   const strip = h => h.replace(/<[^>]+>/g,'').replace(/&nbsp;/g,' ');
   let t = 'WHISE · Proposition pour notre réseau / notre agence\n\n';
   ids.forEach(id => { const p = PAINS.find(x=>x.id===id);
     t += '• ' + p.q + '\n' + strip(p.promise) + '\n' + p.how.map(h=>'  - '+strip(h)).join('\n') + '\n  Pour la direction : ' + strip(GAIN[id]) + '\n\n'; });
   t += 'Pour la direction : vue consolidée par agence et par région, droits par rôle, déploiement accompagné, accès API et IA tracés sous le contrôle du siège.\n\n';
   t += 'Contact WHISE France : ' + CONTACT.name + ' · ' + CONTACT.email + ' · ' + CONTACT.phone + '\n';
-  t += 'Lien : ' + NOTE_URL + '#' + codeOf(ids).toLowerCase();
+  t += 'Lien : ' + noteUrl(ref);
   return t;
 }
 function copy(text, done){
@@ -511,33 +568,148 @@ function copy(text, done){
     try{ document.execCommand('copy'); ok(); }catch(e){ $('#copied').textContent = 'Sélectionnez le texte pour le copier.'; } ta.remove(); };
   try{ navigator.clipboard.writeText(text).then(ok, fallback); }catch(e){ fallback(); }
 }
-function renderNote(ids){
+const NOTE_COPY = {
+  m:{h1:'Une proposition pour <b class="gtext">votre réseau ou votre agence.</b>',
+     intro:'Vous avez identifié ces priorités sur le stand WHISE à RENT 2026. Voici ce que WHISE change pour vous, et ce que votre direction y gagne. Transférez cette page à votre directeur.',
+     gain:'Pour votre direction', dir:true, next:'Prochaine étape&nbsp;: <b>un échange avec votre direction.</b>',
+     nextp:'Notre équipe France vous présente WHISE, à vous et à votre directeur, sur vos propres cas.'},
+  r:{h1:'Votre récapitulatif <b class="gtext">WHISE.</b>',
+     intro:'Vous avez identifié ces priorités sur le stand WHISE à RENT 2026. Voici comment WHISE y répond, pour votre réseau et pour chacune de vos agences.',
+     gain:'Pour votre réseau', dir:true, next:'Prochaine étape&nbsp;: <b>une démonstration sur vos propres cas.</b>',
+     nextp:'Notre équipe France vous montre comment optimiser l’organisation et la performance commerciale de votre réseau.'},
+  a:{h1:'Votre récapitulatif <b class="gtext">WHISE.</b>',
+     intro:'Vous avez identifié ces priorités sur le stand WHISE à RENT 2026. Voici comment WHISE y répond, et ce que votre agence y gagne.',
+     gain:'Ce que votre agence y gagne', dir:false, next:'Prochaine étape&nbsp;: <b>une démonstration sur vos propres cas.</b>',
+     nextp:'Notre équipe France vous montre WHISE avec vos biens, vos contacts et votre organisation.'}
+};
+NOTE_COPY.x = NOTE_COPY.a;
+
+/* ---------- lead capture: Firestore (EU) through its REST API ----------
+   config.js sets window.WHISE_LEADS = {projectId, apiKey, authDomain, privacyUrl}.
+   Without it, no form is shown. Security rules (firestore.rules) only allow creating
+   a well-formed lead; nobody can read leads except the admins listed there. */
+const LEADS = window.WHISE_LEADS && window.WHISE_LEADS.projectId && window.WHISE_LEADS.apiKey ? window.WHISE_LEADS : null;
+const CONSENT_TEXT = 'J’accepte que WHISE utilise ces informations pour me recontacter au sujet de ma demande à RENT 2026. Je peux retirer mon consentement à tout moment.';
+const QUEUE_KEY = 'whise-rent-queue';
+
+function leadFormHTML(prefix){
+  const priv = LEADS && LEADS.privacyUrl ? ` <a href="${LEADS.privacyUrl}" target="_blank" rel="noopener">Politique de confidentialité</a>` : '';
+  return `<form class="leadform" id="${prefix}Form" novalidate>
+    <div class="field"><label for="${prefix}Name">Nom et prénom</label><input id="${prefix}Name" name="name" autocomplete="name" required maxlength="120"></div>
+    <div class="field"><label for="${prefix}Email">E-mail professionnel</label><input id="${prefix}Email" name="email" type="email" inputmode="email" autocomplete="email" autocapitalize="off" spellcheck="false" required maxlength="160"></div>
+    <div class="field"><label for="${prefix}Company">Agence ou réseau</label><input id="${prefix}Company" name="company" autocomplete="organization" maxlength="160"></div>
+    <div class="field"><label for="${prefix}Phone">Téléphone (facultatif)</label><input id="${prefix}Phone" name="phone" type="tel" autocomplete="tel" maxlength="40"></div>
+    <div class="hp" aria-hidden="true"><label for="${prefix}Web">Site web</label><input id="${prefix}Web" name="website" tabindex="-1" autocomplete="off"></div>
+    <label class="consent"><input type="checkbox" id="${prefix}Consent" name="consent" required><span>${CONSENT_TEXT}${priv}</span></label>
+    <button class="send" type="submit">Envoyer</button>
+    <div class="msg" id="${prefix}Msg" aria-live="polite"></div>
+  </form>`;
+}
+
+function randomId(){ try{ return crypto.randomUUID().replace(/-/g,''); }catch(e){ return Date.now().toString(36) + Math.random().toString(36).slice(2,12); } }
+
+async function postLead(lead){
+  const base = `projects/${LEADS.projectId}/databases/(default)/documents`;
+  const S = v => ({stringValue: String(v||'')});
+  const body = {writes:[{
+    update:{name:`${base}/leads/${lead.id}`, fields:{
+      name:S(lead.name), email:S(lead.email), company:S(lead.company), phone:S(lead.phone),
+      segment:S(lead.segment), painpoints:{arrayValue:{values:lead.painpoints.map(S)}},
+      ref:S(lead.ref), source:S(lead.source), consent:{booleanValue:true}, consentText:S(CONSENT_TEXT)}},
+    updateTransforms:[{fieldPath:'createdAt', setToServerValue:'REQUEST_TIME'}],
+    currentDocument:{exists:false}}]};
+  const r = await fetch(`https://firestore.googleapis.com/v1/${base}:commit?key=${encodeURIComponent(LEADS.apiKey)}`,
+    {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body)});
+  if(r.status === 409) return; // already stored by an earlier retry
+  if(!r.ok){ const e = new Error('rejected ' + r.status); e.rejected = true; throw e; }
+}
+
+function readQueue(){ try{ return JSON.parse(localStorage.getItem(QUEUE_KEY) || '[]'); }catch(e){ return []; } }
+function writeQueue(q){ try{ localStorage.setItem(QUEUE_KEY, JSON.stringify(q)); }catch(e){} }
+async function flushQueue(){
+  if(!LEADS) return; const q = readQueue(); if(!q.length) return;
+  const left = [];
+  for(const lead of q){ try{ await postLead(lead); }catch(e){ if(!e.rejected) left.push(lead); } }
+  writeQueue(left);
+}
+
+function wireLeadForm(prefix, ctx, onDone){
+  const f = $('#'+prefix+'Form'), msg = $('#'+prefix+'Msg');
+  f.addEventListener('submit', async e => {
+    e.preventDefault();
+    msg.className = 'msg'; msg.textContent = '';
+    const v = n => f.elements[n].value.trim();
+    if(v('website')){ msg.className='msg ok'; msg.textContent='Merci.'; return; }
+    if(v('name').length < 2){ msg.className='msg err'; msg.textContent='Indiquez votre nom et prénom.'; f.elements.name.focus(); return; }
+    if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v('email'))){ msg.className='msg err'; msg.textContent='Vérifiez votre adresse e-mail.'; f.elements.email.focus(); return; }
+    if(!f.elements.consent.checked){ msg.className='msg err'; msg.textContent='Cochez la case de consentement pour envoyer vos coordonnées.'; return; }
+    const lead = {id:randomId(), name:v('name'), email:v('email').toLowerCase(), company:v('company'), phone:v('phone'),
+      segment:ctx.segment, painpoints:ctx.ids, ref:ctx.ref, source:ctx.source};
+    const btn = f.querySelector('.send'); btn.disabled = true; msg.textContent = 'Envoi…';
+    try{
+      await postLead(lead);
+      f.querySelectorAll('input').forEach(i => { i.type==='checkbox' ? i.checked=false : i.value=''; });
+      msg.className='msg ok'; msg.textContent='Merci. Notre équipe France vous recontacte très vite.';
+      onDone && onDone();
+    }catch(err){
+      if(!err.rejected && ctx.source==='ipad'){
+        const q = readQueue(); q.push(lead); writeQueue(q);
+        f.querySelectorAll('input').forEach(i => { i.type==='checkbox' ? i.checked=false : i.value=''; });
+        msg.className='msg ok'; msg.textContent='Merci. Vos coordonnées sont enregistrées et partiront dès le retour du réseau.';
+        onDone && onDone();
+      } else {
+        msg.className='msg err'; msg.textContent = err.rejected ? 'L’envoi a été refusé. Vérifiez les champs et réessayez.' : 'L’envoi n’a pas abouti. Vérifiez votre connexion et réessayez.';
+      }
+    }finally{ btn.disabled = false; }
+  });
+}
+
+/* iPad fallback sheet */
+function openSheet(){
+  $('#sheetForm').innerHTML = leadFormHTML('ipad');
+  wireLeadForm('ipad', {segment:SEG_KEY[seg]||'x', ids:picked.slice(), ref:currentRef(), source:'ipad'},
+    () => setTimeout(reset, 4000));
+  $('#sheet').hidden = false;
+  setTimeout(() => $('#ipadName').focus(), 50);
+}
+function closeSheet(){ const s = $('#sheet'); if(s){ s.hidden = true; $('#sheetForm').innerHTML = ''; } }
+document.querySelectorAll('.leadbtn').forEach(b => { b.hidden = !LEADS; b.onclick = openSheet; });
+$('#sheetClose').onclick = closeSheet;
+window.addEventListener('online', flushQueue);
+setInterval(flushQueue, 60000);
+flushQueue();
+
+function renderNote(ids, sk, ref){
+  const c = NOTE_COPY[sk] || NOTE_COPY.a;
   document.querySelector('header').style.display = 'none';
   ['#pick','#results','#mand','#bar','#prestoggle'].forEach(s => $(s).style.display = 'none');
   const n = $('#note'); n.style.display = 'block';
   n.innerHTML = `<img class="logo" src="${document.querySelector('header img').src}" alt="WHISE">
-    <h1>Une proposition pour <b class="gtext">votre réseau ou votre agence.</b></h1>
-    <p class="intro">Vous avez identifié ces priorités sur le stand WHISE à RENT 2026. Voici ce que WHISE change pour vous, et ce que votre direction y gagne. Transférez cette page à votre directeur.</p>
+    <h1>${c.h1}</h1>
+    <p class="intro">${c.intro}</p>
     ${ids.map(id => { const p = PAINS.find(x=>x.id===id); return `<section class="nitem">
       <div class="top"><h2>${p.q}</h2><p>${p.ctx}</p></div>
       <div class="body"><div class="k">Avec WHISE</div><ul>${p.how.map(h=>`<li>${h}</li>`).join('')}</ul>
-      <div class="gain"><b>Pour votre direction</b>${GAIN[id]}</div></div></section>`; }).join('')}
-    <section class="ndir"><h2>Pour la direction du réseau&nbsp;: standardisez vos processus, <span class="gtext">préservez l’autonomie de chaque agence.</span></h2>
+      <div class="gain"><b>${c.gain}</b>${GAIN[id]}</div></div></section>`; }).join('')}
+    ${LEADS ? `<section class="lead"><h2>Restons <b>en contact.</b></h2><p class="sub">Laissez vos coordonnées&nbsp;: notre équipe France vous recontacte pour une démonstration sur vos propres cas.</p>${leadFormHTML('phone')}</section>` : ''}
+    ${c.dir ? `<section class="ndir"><h2>Pour la direction du réseau&nbsp;: standardisez vos processus, <span class="gtext">préservez l’autonomie de chaque agence.</span></h2>
       <div class="g"><div><b>Vue consolidée</b>Activité et résultats par agence et par région.</div>
       <div><b>Droits par rôle</b>Chacun voit ce qu’il doit voir, du siège à l’agent.</div>
       <div><b>Déploiement accompagné</b>Migration, configuration centrale et formation de toutes les agences.</div>
-      <div><b>Contrôle et traçabilité</b>Accès API et IA tracés, sous le contrôle du siège.</div></div></section>
-    <section class="nnext"><h2>Prochaine étape&nbsp;: <b>un échange avec votre direction.</b></h2>
-      <p>Notre équipe France vous présente WHISE, à vous et à votre directeur, sur vos propres cas.</p>
+      <div><b>Contrôle et traçabilité</b>Accès API et IA tracés, sous le contrôle du siège.</div></div></section>` : ''}
+    <section class="nnext"><h2>${c.next}</h2>
+      <p>${c.nextp}</p>
       <div class="contact"><b>${CONTACT.name}</b> · ${CONTACT.role}<br>${CONTACT.email}<br>${CONTACT.phone}</div></section>
     <div class="nacts"><button id="copyLink">Copier le lien</button><button class="alt" id="copyText">Copier le texte</button><span class="copied" id="copied" aria-live="polite"></span></div>
-    <p class="nref">Référence ${codeOf(ids)} · RENT 2026 · Paris</p>`;
-  $('#copyLink').onclick = () => copy(NOTE_URL + '#' + codeOf(ids).toLowerCase(), 'Lien copié. Collez-le dans un message à votre directeur.');
-  $('#copyText').onclick = () => copy(noteText(ids), 'Texte copié. Collez-le dans un e-mail à votre directeur.');
+    <p class="nref">Référence ${ref} · RENT 2026 · Paris</p>`;
+  const who = sk==='m' ? 'à votre directeur' : 'à vos collègues';
+  $('#copyLink').onclick = () => copy(noteUrl(ref), `Lien copié. Collez-le dans un message ${who}.`);
+  $('#copyText').onclick = () => copy(noteText(ids, ref), `Texte copié. Collez-le dans un e-mail ${who}.`);
+  if(LEADS) wireLeadForm('phone', {segment:sk, ids, ref, source:'phone'});
 }
-const hm = (location.hash||'').match(/^#m-([a-h]{1,3})$/i);
-const NOTE_MODE = !!(hm && idsOf(hm[1]).length);
-if(NOTE_MODE) renderNote(idsOf(hm[1]));
+const hm = (location.hash||'').match(/^#([marx])-([a-h]{1,3})(?:-([a-z0-9]{4}))?$/i);
+const NOTE_MODE = !!(hm && idsOf(hm[2]).length);
+if(NOTE_MODE) renderNote(idsOf(hm[2]), hm[1].toLowerCase(), hm[0].slice(1).toUpperCase());
 
 /* idle reset for the booth (not on the visitor's phone) */
 let idle; const kick = () => { if(NOTE_MODE) return; clearTimeout(idle); idle = setTimeout(reset, IDLE_RESET_SECONDS*1000); };
