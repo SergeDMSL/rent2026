@@ -172,6 +172,11 @@ header img{height:30px}
 .nref{margin-top:20px;font-size:12px;color:var(--fg3)}
 
 /* lead capture: QR on the results screen, form on the phone and on the iPad */
+.rtop{display:grid;grid-template-columns:1fr 320px;gap:24px;align-items:start;padding-top:32px}
+.rtop .rhead{padding:8px 0 0}
+.rsub{margin-top:12px;font-size:17px;line-height:1.5;color:var(--fg2);max-width:640px}
+.rqrcard{padding:22px;gap:12px}
+.rqrcard .qrbox img,.rqrcard .qrbox canvas{width:200px;height:200px}
 .qrwrap{display:flex;flex-direction:column;align-items:center;gap:10px}
 .qrbox{background:#fff;padding:12px;border-radius:16px;line-height:0}
 .qrbox img,.qrbox canvas{display:block;width:170px;height:170px}
@@ -210,7 +215,7 @@ body.presenter .pres{display:block}
 .prestoggle{position:fixed;left:10px;bottom:10px;z-index:7;width:30px;height:30px;border-radius:50%;opacity:.15;background:var(--black);color:#fff;font-size:11px;font-weight:800}
 body.presenter .prestoggle{opacity:.8}
 
-@media (max-width:1100px){.handoff{grid-template-columns:1fr}.grid{grid-template-columns:repeat(2,1fr)}.ans{grid-template-columns:1fr}.network{grid-template-columns:1fr}}
+@media (max-width:1100px){.rtop{grid-template-columns:1fr}.handoff{grid-template-columns:1fr}.grid{grid-template-columns:repeat(2,1fr)}.ans{grid-template-columns:1fr}.network{grid-template-columns:1fr}}
 @media (max-width:640px){
   .wrap{padding:0 16px}.grid{grid-template-columns:1fr}.pain{min-height:0}
   .network .g{grid-template-columns:1fr 1fr}.close{grid-template-columns:1fr}
@@ -248,25 +253,32 @@ body.presenter .prestoggle{opacity:.8}
 
 <!-- STEP 2 · answers -->
 <main id="results"><div class="wrap">
-  <div class="rhead">
-    <div class="tag">Vos priorités</div>
-    <h2 style="margin-top:10px">Voici comment WHISE <b class="gtext">vous fait gagner du terrain.</b></h2>
+  <div class="rtop">
+    <div class="rhead">
+      <div class="tag">Vos priorités</div>
+      <h2 style="margin-top:10px">Voici comment WHISE <b class="gtext">vous fait gagner du terrain.</b></h2>
+      <p class="rsub">Scannez le QR code avec votre téléphone&nbsp;: vous gardez ce récapitulatif et notre équipe France vous recontacte pour une démonstration sur vos propres cas.</p>
+      <div class="staff"><b>Équipe WHISE&nbsp;:</b> avant la démo, faites scanner le QR code au visiteur. Scannez son badge avec l’application exposant RENT et ajoutez le code <b id="rref2"></b> en note.</div>
+    </div>
+    <div class="qrcard rqrcard">
+      <div class="k">Scannez avec votre téléphone</div>
+      <div class="qrbox" id="rqr"></div>
+      <div class="ref">Code de votre sélection<b id="rref"></b></div>
+      <button class="lightbtn leadbtn" hidden>Pas de téléphone&nbsp;? Laissez vos coordonnées ici</button>
+    </div>
   </div>
   <div class="answers" id="answers"></div>
   <div id="networkBlock"></div>
   <div class="close">
     <div>
-      <h3>Gardez cette sélection, <b>sur votre téléphone.</b></h3>
-      <p>Scannez le QR code&nbsp;: vous recevez ce récapitulatif, et notre équipe France vous recontacte pour une démonstration sur vos propres cas.</p>
+      <h3>Allons plus loin, <b>sur vos propres cas.</b></h3>
+      <p>Notre équipe France vous montre WHISE avec vos biens, vos contacts et votre organisation.</p>
       <div class="racts">
-        <button class="lightbtn leadbtn" hidden>Pas de téléphone&nbsp;? Laissez vos coordonnées ici</button>
         <button class="ghost" style="color:#fff;border-color:rgba(255,255,255,.6)" id="back">← Modifier mes priorités</button>
         <button class="ghost" style="color:#fff;border-color:rgba(255,255,255,.6)" id="reset">Nouveau visiteur</button>
       </div>
     </div>
-    <div class="qrwrap"><div class="qrbox" id="rqr"></div><div class="rref">Code <b id="rref"></b></div></div>
   </div>
-  <div class="staff"><b>Équipe WHISE&nbsp;:</b> scannez le badge du visiteur avec l’application exposant RENT et ajoutez le code <b id="rref2"></b> en note.</div>
 </div></main>
 
 <!-- STEP 2b · mandataire: hand off by QR, no demo -->
@@ -687,11 +699,11 @@ function renderNote(ids, sk, ref){
   n.innerHTML = `<img class="logo" src="${document.querySelector('header img').src}" alt="WHISE">
     <h1>${c.h1}</h1>
     <p class="intro">${c.intro}</p>
+    ${LEADS ? `<section class="lead"><h2>Recevez ce récapitulatif <b>et un rendez-vous.</b></h2><p class="sub">20 secondes&nbsp;: notre équipe France vous recontacte pour une démonstration sur vos propres cas.</p>${leadFormHTML('phone')}</section>` : ''}
     ${ids.map(id => { const p = PAINS.find(x=>x.id===id); return `<section class="nitem">
       <div class="top"><h2>${p.q}</h2><p>${p.ctx}</p></div>
       <div class="body"><div class="k">Avec WHISE</div><ul>${p.how.map(h=>`<li>${h}</li>`).join('')}</ul>
       <div class="gain"><b>${c.gain}</b>${GAIN[id]}</div></div></section>`; }).join('')}
-    ${LEADS ? `<section class="lead"><h2>Restons <b>en contact.</b></h2><p class="sub">Laissez vos coordonnées&nbsp;: notre équipe France vous recontacte pour une démonstration sur vos propres cas.</p>${leadFormHTML('phone')}</section>` : ''}
     ${c.dir ? `<section class="ndir"><h2>Pour la direction du réseau&nbsp;: standardisez vos processus, <span class="gtext">préservez l’autonomie de chaque agence.</span></h2>
       <div class="g"><div><b>Vue consolidée</b>Activité et résultats par agence et par région.</div>
       <div><b>Droits par rôle</b>Chacun voit ce qu’il doit voir, du siège à l’agent.</div>
