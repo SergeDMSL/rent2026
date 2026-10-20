@@ -359,6 +359,28 @@ body.presenter #wskip.pres{display:inline-flex}
 .rhead2 h2{margin-top:10px;font-weight:300;font-size:clamp(28px,3.6vw,44px);line-height:1.08;letter-spacing:-.03em}
 .rhead2 h2 b{font-weight:800}
 
+/* note box (WHISE team) */
+.notebtn{display:inline-flex;align-items:center;gap:8px}
+.ncount[hidden]{display:none}
+.ncount{min-width:20px;height:20px;padding:0 6px;border-radius:99px;background:var(--c2);color:#fff;font-size:11px;font-weight:800;display:inline-grid;place-items:center}
+#notes{position:fixed;inset:0;z-index:10;background:rgba(12,19,23,.55);display:grid;place-items:center;padding:16px}
+#notes[hidden]{display:none}
+#notes .panel{background:#fff;border-radius:22px;width:min(620px,100%);max-height:100%;overflow:auto;padding:24px;display:grid;gap:14px}
+.nhead{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap}
+.nhead h2{font-size:22px;font-weight:300}
+.nhead h2 b{font-weight:800}
+.nwho{font-size:13px;color:var(--fg3);font-variant-numeric:tabular-nums}
+.nwho b{color:var(--black)}
+.ntags{display:flex;flex-wrap:wrap;gap:8px}
+.ntags button{font-size:13px;font-weight:700;padding:9px 14px;border-radius:99px;border:1.5px solid var(--line);background:#fff}
+.ntags button.on{background:var(--black);border-color:var(--black);color:#fff}
+#notes textarea{font:inherit;font-size:16px;line-height:1.45;padding:13px 14px;border-radius:12px;border:1.5px solid #D6D0CC;width:100%;resize:vertical;user-select:text}
+#notes textarea:focus{outline:none;border-color:var(--c2);box-shadow:0 0 0 3px rgba(220,37,80,.15)}
+#notes .row2{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.nlist{list-style:none;display:grid;gap:8px}
+.nlist li{font-size:13.5px;line-height:1.45;color:var(--fg2);background:var(--soft);border-radius:12px;padding:10px 12px;white-space:pre-wrap}
+.nlist li b{color:var(--black)}
+
 /* presenter mode (toggle with the P key or the corner button) */
 .pres{display:none}
 body.presenter .pres{display:block}
@@ -381,6 +403,7 @@ body.presenter .prestoggle{opacity:.8}
   <img src="assets/lockup_primary.png" alt="WHISE">
   <div style="display:flex;align-items:center;gap:16px">
     <span class="tag tag-top">RENT 2026 · Paris</span>
+    <button class="ghost notebtn" id="noteTop" hidden><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>Note<span class="ncount" id="noteCount" hidden></span></button>
     <button class="ghost" id="resetTop" hidden>Nouveau visiteur</button>
   </div>
 </div></header>
@@ -465,6 +488,18 @@ body.presenter .prestoggle{opacity:.8}
     <button class="ghost" id="mreset">Nouveau visiteur</button>
   </div>
 </div></main>
+
+<!-- Note box for the WHISE team: extra info and questions from the prospect -->
+<div id="notes" hidden><div class="panel" role="dialog" aria-modal="true" aria-labelledby="notesTitle">
+  <div class="nhead"><h2 id="notesTitle">Note pour <b>le suivi</b></h2><span class="nwho" id="noteWho"></span></div>
+  <div class="ntags" id="noteTags"></div>
+  <div class="field"><label for="noteText">Infos sur le prospect, questions posées, prochaine étape</label>
+    <textarea id="noteText" rows="5" maxlength="2000" placeholder="Ex. : utilise Hektor, contrat jusqu’en mars. Question sur l’import des mandats. Rappeler jeudi."></textarea></div>
+  <p class="tip">Touchez le micro du clavier pour dicter.</p>
+  <div class="row2"><button class="send" id="noteSave" type="button">Enregistrer la note</button><button class="ghost" id="noteClose" type="button">Fermer</button></div>
+  <div class="msg" id="noteMsg" aria-live="polite"></div>
+  <ul class="nlist" id="noteList"></ul>
+</div></div>
 
 <!-- iPad fallback: the visitor leaves their details on the booth iPad -->
 <div id="sheet" hidden><div class="panel" role="dialog" aria-modal="true" aria-labelledby="sheetTitle">
@@ -830,7 +865,7 @@ function paintThemes(ids){
 }
 
 document.addEventListener('keydown', e => {
-  if($('#results').style.display !== 'block') return;
+  if($('#results').style.display !== 'block' || typing(e) || !$('#notes').hidden) return;
   if(e.key === 'ArrowRight') step(1); if(e.key === 'ArrowLeft') step(-1);
 });
 
@@ -866,11 +901,12 @@ function show(step){
   ['welcome','pick','results','mand'].forEach(k => $('#'+k).style.display = k===step ? 'block' : 'none');
   $('#bar').classList.toggle('show', step==='pick' && picked.length>0);
   $('#resetTop').hidden = step==='welcome' || (step==='pick' && picked.length===0 && !seg);
+  $('#noteTop').hidden = !LEADS || step==='welcome';
   if(res){ renderResults(); renderNetwork(); const code = currentRef(); $('#rref').textContent = code; drawQR($('#rqr'), noteUrl(code)); }
   if(mand) renderMand();
   window.scrollTo({top:0,behavior:'smooth'});
 }
-function reset(){closeSheet();visit=newVisit();picked=[];seg=null;document.querySelectorAll('.chip').forEach(x=>x.setAttribute('aria-pressed','false'));renderGrid();renderWelcome();show(LEADS?'welcome':'pick');$('#resetTop').hidden=true}
+function reset(){closeSheet();closeNotes();visitor='';visitNotes=[];paintNoteCount();visit=newVisit();picked=[];seg=null;document.querySelectorAll('.chip').forEach(x=>x.setAttribute('aria-pressed','false'));renderGrid();renderWelcome();show(LEADS?'welcome':'pick');$('#resetTop').hidden=true}
 
 $('#go').onclick = () => { saveSelection(); show(seg==='mandataire' ? 'mand' : 'results'); };
 $('#mback').onclick = () => show('pick');
@@ -883,7 +919,8 @@ document.addEventListener('click', () => { if(picked.length||seg) $('#resetTop')
 /* presenter mode: shows what to open in the demo, plus open checks */
 const togglePres = () => document.body.classList.toggle('presenter');
 $('#prestoggle').onclick = togglePres;
-document.addEventListener('keydown', e => { if(e.key==='p'||e.key==='P') togglePres(); });
+const typing = e => /^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName) || e.target.isContentEditable;
+document.addEventListener('keydown', e => { if(!typing(e) && (e.key==='p'||e.key==='P')) togglePres(); });
 
 /* ---------- phone view: NOTE_URL#m-adh ---------- */
 function noteText(ids, ref){
@@ -975,7 +1012,7 @@ function writeQueue(q){ try{ localStorage.setItem(QUEUE_KEY, JSON.stringify(q));
 async function flushQueue(){
   if(!LEADS) return; const q = readQueue(); if(!q.length) return;
   const left = [];
-  for(const x of q){ try{ await (x.kind==='sel' ? postSelection(x) : postLead(x)); }catch(e){ if(!e.rejected) left.push(x); } }
+  for(const x of q){ try{ await (x.kind==='sel' ? postSelection(x) : x.kind==='note' ? postNote(x) : postLead(x)); }catch(e){ if(!e.rejected) left.push(x); } }
   writeQueue(left);
 }
 
@@ -997,13 +1034,13 @@ function wireLeadForm(prefix, ctx, onDone){
       await postLead(lead);
       f.querySelectorAll('input').forEach(i => { i.type==='checkbox' ? i.checked=false : i.value=''; });
       msg.className='msg ok'; msg.textContent='Merci. Notre équipe France vous recontacte très vite.';
-      onDone && onDone();
+      onDone && onDone(lead);
     }catch(err){
       if(!err.rejected && ctx.source==='ipad'){
         const q = readQueue(); q.push(lead); writeQueue(q);
         f.querySelectorAll('input').forEach(i => { i.type==='checkbox' ? i.checked=false : i.value=''; });
         msg.className='msg ok'; msg.textContent='Merci. Vos coordonnées sont enregistrées et partiront dès le retour du réseau.';
-        onDone && onDone();
+        onDone && onDone(lead);
       } else {
         msg.className='msg err'; msg.textContent = err.rejected ? 'L’envoi a été refusé. Vérifiez les champs et réessayez.' : 'L’envoi n’a pas abouti. Vérifiez votre connexion et réessayez.';
       }
@@ -1011,11 +1048,46 @@ function wireLeadForm(prefix, ctx, onDone){
   });
 }
 
+/* Note box: free text + quick tags, stored in `notes` (linked to the visit), several per visit allowed */
+const NOTE_TAGS = ['Veut une démo complète','À rappeler','Question tarif','Décideur','Projet sous 6 mois','Réseau / groupement','Logiciel actuel : '];
+let visitor = '', visitNotes = [];
+const postNote = x => postDoc('notes', x.id, {visit:S(x.visit), ref:S(x.ref), text:S(x.text)});
+function paintNoteCount(){ const c = $('#noteCount'); c.hidden = !visitNotes.length; c.textContent = visitNotes.length; }
+function openNotes(){
+  $('#noteWho').innerHTML = (visitor ? `<b>${visitor.replace(/[<>&]/g,'')}</b> · ` : '') + 'code ' + (picked.length ? currentRef() : visit);
+  $('#noteTags').innerHTML = NOTE_TAGS.map(t => `<button type="button">${t}</button>`).join('');
+  $('#noteTags').querySelectorAll('button').forEach(b => b.onclick = () => {
+    const ta = $('#noteText'), t = b.textContent;
+    ta.value = (ta.value && !/\s$/.test(ta.value) ? ta.value + (t.endsWith(': ') ? '\n' : ' · ') : ta.value) + t;
+    b.classList.add('on'); ta.focus(); ta.setSelectionRange(ta.value.length, ta.value.length);
+  });
+  $('#noteList').innerHTML = visitNotes.map(n => `<li><b>Enregistrée&nbsp;:</b> ${n.replace(/[<>&]/g,'')}</li>`).join('');
+  $('#noteMsg').textContent = ''; $('#noteMsg').className = 'msg';
+  $('#notes').hidden = false; setTimeout(() => $('#noteText').focus(), 50);
+}
+function closeNotes(){ $('#notes').hidden = true; }
+$('#noteTop').onclick = openNotes;
+$('#noteClose').onclick = closeNotes;
+$('#noteSave').onclick = async () => {
+  const text = $('#noteText').value.trim(), msg = $('#noteMsg');
+  if(text.length < 2){ msg.className = 'msg err'; msg.textContent = 'La note est vide.'; return; }
+  const x = {kind:'note', id:randomId(), visit, ref:picked.length ? currentRef() : visit, text:text.slice(0,2000)};
+  const done = m => { visitNotes.push(text); paintNoteCount(); $('#noteText').value = ''; msg.className = 'msg ok'; msg.textContent = m;
+    $('#noteList').innerHTML = visitNotes.map(n => `<li><b>Enregistrée&nbsp;:</b> ${n.replace(/[<>&]/g,'')}</li>`).join('');
+    $('#noteTags').querySelectorAll('button').forEach(b => b.classList.remove('on')); };
+  $('#noteSave').disabled = true;
+  try{ await postNote(x); done('Note enregistrée.'); }
+  catch(e){
+    if(!e.rejected){ const q = readQueue(); q.push(x); writeQueue(q); done('Note gardée sur l’iPad, envoi dès le retour du réseau.'); }
+    else { msg.className = 'msg err'; msg.textContent = 'Note refusée. Raccourcissez-la et réessayez.'; }
+  } finally { $('#noteSave').disabled = false; }
+};
+
 /* Welcome: mandatory contact step on the booth iPad */
 function renderWelcome(){
   if(!LEADS) return;
   $('#welcomeBox').innerHTML = leadFormHTML('welcome', {phone:false, company:true, button:'Commencer →'});
-  wireLeadForm('welcome', {segment:'x', ids:[], ref:visit, source:'ipad', company:true}, () => setTimeout(() => show('pick'), 600));
+  wireLeadForm('welcome', {segment:'x', ids:[], ref:visit, source:'ipad', company:true}, lead => { visitor = lead.name + (lead.company ? ' · ' + lead.company : ''); setTimeout(() => show('pick'), 600); });
 }
 $('#wskip').onclick = () => show('pick');
 

@@ -62,6 +62,19 @@ service cloud.firestore {
       allow update, delete: if false;
     }
 
+    // Notes from the WHISE team on a visit (extra info, questions). Several per visit.
+    match /notes/{noteId} {
+      allow read: if isAdmin();
+      allow create: if
+        request.resource.data.keys().hasOnly(['visit','ref','text','createdAt'])
+        && request.resource.data.keys().hasAll(['visit','ref','text','createdAt'])
+        && text(request.resource.data.visit, 4, 8)
+        && text(request.resource.data.ref, 4, 20)
+        && text(request.resource.data.text, 2, 2000)
+        && request.resource.data.createdAt == request.time;
+      allow update, delete: if false;
+    }
+
     match /{document=**} {
       allow read, write: if false;
     }

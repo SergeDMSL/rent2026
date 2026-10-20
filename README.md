@@ -29,6 +29,8 @@ Each visit gets a code such as `A-ACD-K7P2` (profile · pain points · visit id)
   (`leads`, ref = visit id). A visitor who refuses: presenter mode (P) shows a skip link.
 - When the visitor sees their answers, their choices are stored in `selections`
   (visit id, code, profile, pain points; no personal data). `/export.html` joins both.
+- "Note" (header) lets the WHISE team add free-text notes with quick tags during the
+  visit; stored in `notes`, linked by visit id, shown in the export's Notes column.
 - If the hall Wi-Fi is down, entries wait on the iPad and are sent once it is back online.
 - The QR strip at the bottom of the results gives the visitor the summary on their phone.
 

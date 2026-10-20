@@ -112,9 +112,11 @@ $('#reload').onclick = load;
 async function load(){
   $('#msg').className = 'msg'; $('#msg').textContent = 'Chargement…';
   try{
-    const [snap, sel] = await Promise.all([
+    const [snap, sel, nts] = await Promise.all([
       getDocs(query(collection(db, 'leads'), orderBy('createdAt', 'desc'))),
-      getDocs(query(collection(db, 'selections'), orderBy('createdAt', 'asc')))]);
+      getDocs(query(collection(db, 'selections'), orderBy('createdAt', 'asc'))),
+      getDocs(query(collection(db, 'notes'), orderBy('createdAt', 'asc')))]);
+    const notesBy = {}; nts.docs.forEach(d => { const x = d.data(); (notesBy[x.visit] = notesBy[x.visit] || []).push(x.text); });
     // latest selection per visit (the visitor may go back and change their priorities)
     const byVisit = {}; sel.docs.forEach(d => { const x = d.data(); byVisit[x.visit] = x; });
     rows = snap.docs.map(d => { const x = d.data(); const v = byVisit[x.ref] || {};
@@ -122,19 +124,19 @@ async function load(){
       const seg = x.segment !== 'x' ? x.segment : (v.segment || 'x');
       return {
       date: x.createdAt ? x.createdAt.toDate().toLocaleString('fr-FR') : '', name: x.name, email: x.email, company: x.company, phone: x.phone,
-      segment: SEG[seg] || seg, painpoints: pts.map(p => PAINS[p] || p).join(' · '), ref: v.ref || x.ref, source: x.source === 'ipad' ? 'iPad' : 'Téléphone' }; });
+      segment: SEG[seg] || seg, painpoints: pts.map(p => PAINS[p] || p).join(' · '), ref: v.ref || x.ref, notes: (notesBy[x.ref] || []).join(' | '), source: x.source === 'ipad' ? 'iPad' : 'Téléphone' }; });
     unlinked = sel.docs.filter(d => !snap.docs.some(l => l.data().ref === d.data().visit)).length;
     render(); $('#msg').textContent = '';
   }catch(e){ $('#msg').className = 'msg err'; $('#msg').textContent = 'Accès refusé. Votre e-mail doit figurer dans la liste des administrateurs (firestore.rules).'; }
 }
 
-const COLS = [['date','Date'],['name','Nom'],['email','E-mail'],['company','Agence / réseau'],['phone','Téléphone'],['segment','Profil'],['painpoints','Priorités'],['ref','Code'],['source','Source']];
+const COLS = [['date','Date'],['name','Nom'],['email','E-mail'],['company','Agence / réseau'],['phone','Téléphone'],['segment','Profil'],['painpoints','Priorités'],['notes','Notes'],['ref','Code'],['source','Source']];
 const esc = v => String(v ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 function render(){
   const by = k => rows.filter(r => r.segment === k).length;
   $('#stats').innerHTML = `<div class="stat"><b>${rows.length}</b>leads</div>` + ['Agence','Mandataire','Réseau'].map(k => `<div class="stat"><b>${by(k)}</b>${k}</div>`).join('') + `<div class="stat"><b>${unlinked}</b>sélections sans coordonnées</div>`;
   $('#tbl').innerHTML = `<thead><tr>${COLS.map(c => `<th>${c[1]}</th>`).join('')}</tr></thead><tbody>${rows.map(r =>
-    `<tr>${COLS.map(c => `<td class="${c[0]==='painpoints'?'wrap':''}">${esc(r[c[0]])}</td>`).join('')}</tr>`).join('')}</tbody>`;
+    `<tr>${COLS.map(c => `<td class="${c[0]==='painpoints'||c[0]==='notes'?'wrap':''}">${esc(r[c[0]])}</td>`).join('')}</tr>`).join('')}</tbody>`;
 }
 $('#csv').onclick = () => {
   const q = v => '"' + String(v ?? '').replace(/"/g, '""') + '"';
