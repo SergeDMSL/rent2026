@@ -359,6 +359,28 @@ body.presenter #wskip.pres{display:inline-flex}
 .rhead2 h2{margin-top:10px;font-weight:300;font-size:clamp(28px,3.6vw,44px);line-height:1.08;letter-spacing:-.03em}
 .rhead2 h2 b{font-weight:800}
 
+/* screen viewer */
+#shots{position:fixed;inset:0;z-index:11;background:rgba(12,19,23,.82);display:grid;place-items:center;padding:16px}
+#shots[hidden]{display:none}
+.sv{background:#fff;border-radius:22px;width:min(1280px,100%);max-height:100%;display:grid;grid-template-rows:auto 1fr auto auto;overflow:hidden}
+.svbar{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 18px;border-bottom:1.5px solid var(--line);flex-wrap:wrap}
+.svk{font-size:11.5px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--c2)}
+.svbar h2{font-size:19px;font-weight:800;margin-top:2px}
+.svctl{display:flex;align-items:center;gap:8px}
+.svn{font-size:13px;color:var(--fg3);font-variant-numeric:tabular-nums;margin-right:4px}
+.svctl button:disabled{opacity:.35}
+.svimg{overflow:auto;background:#EEF0F2;min-height:0;display:grid;place-items:center;cursor:zoom-in}
+.svimg img{display:block;max-width:100%;max-height:68vh;object-fit:contain;animation:rise .3s both}
+.svimg.zoom{place-items:start;cursor:zoom-out}
+.svimg.zoom img{max-width:none;max-height:none;width:1440px}
+.svcap{padding:14px 18px 6px;font-size:16px;font-weight:700;line-height:1.4}
+.svthumbs{display:flex;gap:10px;padding:8px 18px 16px;overflow-x:auto}
+.svthumbs button{flex:none;width:132px;border-radius:10px;overflow:hidden;border:2px solid var(--line);background:#fff;padding:0;line-height:0}
+.svthumbs button img{width:100%;display:block}
+.svthumbs button.on{border-color:var(--c2)}
+button.demo{border:0;cursor:pointer}
+@media (max-width:640px){.svimg img{max-height:50vh}.svcap{font-size:14px}}
+
 /* note box (WHISE team) */
 .notebtn{display:inline-flex;align-items:center;gap:8px}
 .ncount[hidden]{display:none}
@@ -493,6 +515,15 @@ body.presenter .prestoggle{opacity:.8}
   </div>
 </div></main>
 
+<!-- Screen viewer: screenshots of the new WHISE, stored in the site (works offline) -->
+<div id="shots" hidden><div class="sv" role="dialog" aria-modal="true" aria-labelledby="svTitle">
+  <div class="svbar"><div><div class="svk" id="svKicker"></div><h2 id="svTitle">Dans le nouveau WHISE</h2></div>
+    <div class="svctl"><span class="svn" id="svCount"></span><button class="ghost" id="svPrev" type="button">←</button><button class="ghost" id="svNext" type="button">→</button><button class="ghost" id="svClose" type="button">Fermer</button></div></div>
+  <div class="svimg" id="svImgWrap"><img id="svImg" alt=""></div>
+  <p class="svcap" id="svCap"></p>
+  <div class="svthumbs" id="svThumbs"></div>
+</div></div>
+
 <!-- Note box for the WHISE team: extra info and questions from the prospect -->
 <div id="notes" hidden><div class="panel" role="dialog" aria-modal="true" aria-labelledby="notesTitle">
   <div class="nhead"><h2 id="notesTitle">Note pour <b>le suivi</b></h2><span class="nwho" id="noteWho"></span></div>
@@ -535,6 +566,25 @@ body.presenter .prestoggle{opacity:.8}
    ============================================================ */
 const DEMO_BASE = "https://webstg.whise.ai/whise-extensive.html";   // new WHISE web prototype (staging)
 const WHIZ_URL = "https://whizstg.whise.ai/";                          // WHIZ, the prompt version (staging)
+/* Screens of the new WHISE prototype (webstg.whise.ai, French UI and French demo data, 21 Oct 2026),
+   stored in the site so the demo works offline. Demo data, not real clients. */
+const SHOTS = {
+  relance:   [['opportunities','Pipeline : chaque vendeur et chaque acquéreur suit son parcours, étape par étape, avec la prochaine action.'],
+              ['tasks','Tâches : les relances à faire, prêtes à traiter et assignées à chaque agent.']],
+  reactivite:[['today','Aujourd’hui : les nouvelles demandes, les leads chauds et les relances déjà rédigées en brouillon.'],
+              ['contacts','Contacts : le score montre en un coup d’œil les contacts les plus engagés.']],
+  base:      [['today','« Julie Bernard correspond à 6 nouveaux biens » : WHISE repère les rapprochements dans votre base.'],
+              ['campaigns','E-mailing : des campagnes ciblées pour réactiver acquéreurs, vendeurs et anciens clients.']],
+  admin:     [['estates','Biens : une seule liste pour diffuser, suivre les rapprochements et le score de publication.'],
+              ['ask','Demander à WHISE : l’assistant agit avec les mêmes outils que votre équipe, et toute modification attend votre validation.']],
+  terrain:   [['ask','Demander à WHISE : décrivez en langage courant, l’assistant prépare l’action. La création de biens à la voix se fait depuis l’application mobile.']],
+  conformite:[['tx-board','Pipeline des transactions : de la prospection au mandat signé, puis au compromis et à l’acte, dossier par dossier.']],
+  pilotage:  [['txdash','Tableau de bord des transactions : conversion, délais et commission, étape par étape.'],
+              ['today','Aujourd’hui : le pipeline par statut et les leads par source, sur un seul écran.']],
+  migration: []
+};
+const SHOT_SRC = {today:'assets/demo/today.jpg', contacts:'assets/demo/contacts.jpg', opportunities:'assets/demo/opportunities.jpg', tasks:'assets/demo/tasks.jpg',
+  campaigns:'assets/demo/campaigns.jpg', estates:'assets/demo/estates.jpg', 'tx-board':'assets/demo/tx-board.jpg', txdash:'assets/demo/txdash.jpg', ask:'assets/demo/ask.jpg'};
 const MAX_PICK = 3;
 /* Public address of this page. The mandataire's phone opens NOTE_URL#m-<letters>.
    The page must be shared as "anyone with the link" for visitors' phones to open it. */
@@ -757,10 +807,9 @@ document.querySelectorAll('.chip').forEach(c => c.addEventListener('click', () =
 }));
 
 function demoLink(p){
-  const web = p.demo ? `<a class="demo" href="${/^https?:/.test(p.demo) ? p.demo : DEMO_BASE + p.demo}" target="_blank" rel="noopener">Voir dans WHISE →</a>` : '';
-  /* WHIZ: copy the suggested question, then open the prompt version */
-  const whiz = p.whiz ? `<a class="demo whiz" href="${WHIZ_URL}" target="_blank" rel="noopener" data-q="${p.whiz.replace(/"/g,'&quot;')}">Demander à WHIZ →</a><span class="note pres"><b>Question copiée&nbsp;:</b> « ${p.whiz} »</span>` : '';
-  return web + whiz || `<span class="demo todo pres">Lien démo à configurer</span>`;
+  const n = (SHOTS[p.id] || []).length;
+  if(!n) return `<span class="demo todo pres">Pas d’écran : accompagnement</span>`;
+  return `<button type="button" class="demo" data-shots="${p.id}">Voir dans WHISE →</button><span class="note">${n} écran${n>1?'s':''} du nouveau WHISE</span>`;
 }
 
 const SHORT = {relance:'Relances', reactivite:'Réactivité', base:'Base qui dort', admin:'Administratif', terrain:'Terrain', conformite:'Réglementaire', pilotage:'Pilotage', migration:'Changer de logiciel'};
@@ -872,7 +921,7 @@ function paintThemes(ids){
 }
 
 document.addEventListener('keydown', e => {
-  if($('#results').style.display !== 'block' || typing(e) || !$('#notes').hidden) return;
+  if($('#results').style.display !== 'block' || typing(e) || !$('#notes').hidden || !$('#shots').hidden) return;
   if(e.key === 'ArrowRight') step(1); if(e.key === 'ArrowLeft') step(-1);
 });
 
@@ -913,7 +962,7 @@ function show(step){
   if(mand) renderMand();
   window.scrollTo({top:0,behavior:'smooth'});
 }
-function reset(){closeSheet();closeNotes();visitor='';visitNotes=[];paintNoteCount();visit=newVisit();picked=[];seg=null;document.querySelectorAll('.chip').forEach(x=>x.setAttribute('aria-pressed','false'));renderGrid();renderWelcome();show(LEADS?'welcome':'pick');$('#resetTop').hidden=true}
+function reset(){closeSheet();closeNotes();closeShots();visitor='';visitNotes=[];paintNoteCount();visit=newVisit();picked=[];seg=null;document.querySelectorAll('.chip').forEach(x=>x.setAttribute('aria-pressed','false'));renderGrid();renderWelcome();show(LEADS?'welcome':'pick');$('#resetTop').hidden=true}
 
 $('#go').onclick = () => { saveSelection(); show(seg==='mandataire' ? 'mand' : 'results'); };
 $('#mback').onclick = () => show('pick');
@@ -928,7 +977,6 @@ const togglePres = () => document.body.classList.toggle('presenter');
 $('#prestoggle').onclick = togglePres;
 const typing = e => /^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName) || e.target.isContentEditable;
 document.addEventListener('keydown', e => { if(!typing(e) && (e.key==='p'||e.key==='P')) togglePres(); });
-document.addEventListener('click', e => { const a = e.target.closest('a.whiz'); if(a && a.dataset.q){ try{ navigator.clipboard.writeText(a.dataset.q).catch(()=>{}); }catch(err){} } });
 
 /* ---------- phone view: NOTE_URL#m-adh ---------- */
 function noteText(ids, ref){
@@ -1055,6 +1103,43 @@ function wireLeadForm(prefix, ctx, onDone){
     }finally{ btn.disabled = false; }
   });
 }
+
+/* Screen viewer */
+let svList = [], svI = 0;
+function openShots(id){
+  svList = SHOTS[id] || []; if(!svList.length) return; svI = 0;
+  $('#svKicker').textContent = SHORT[id] + ' · ' + THEMES[MAP[id].t].n + ' ' + THEMES[MAP[id].t].name;
+  $('#svThumbs').innerHTML = svList.length > 1 ? svList.map(([k],i) => `<button type="button" data-i="${i}" aria-label="Écran ${i+1}"><img src="${SHOT_SRC[k]}" alt=""></button>`).join('') : '';
+  $('#svThumbs').querySelectorAll('button').forEach(b => b.onclick = () => svGo(+b.dataset.i));
+  $('#shots').hidden = false; svGo(0);
+}
+function svGo(i){
+  svI = i; const [k, cap] = svList[i];
+  const img = $('#svImg'); img.style.animation = 'none'; void img.offsetWidth; img.style.animation = '';
+  img.src = SHOT_SRC[k]; img.alt = cap; $('#svCap').textContent = cap;
+  $('#svImgWrap').classList.remove('zoom');
+  $('#svCount').textContent = svList.length > 1 ? `Écran ${i+1} / ${svList.length}` : '';
+  $('#svPrev').hidden = $('#svNext').hidden = svList.length < 2;
+  $('#svPrev').disabled = i === 0; $('#svNext').disabled = i === svList.length - 1;
+  $('#svThumbs').querySelectorAll('button').forEach(b => b.classList.toggle('on', +b.dataset.i === i));
+}
+function closeShots(){ $('#shots').hidden = true; }
+$('#svPrev').onclick = () => svI > 0 && svGo(svI - 1);
+$('#svNext').onclick = () => svI < svList.length - 1 && svGo(svI + 1);
+$('#svClose').onclick = closeShots;
+$('#svImgWrap').onclick = () => $('#svImgWrap').classList.toggle('zoom');
+$('#shots').addEventListener('click', e => { if(e.target.id === 'shots') closeShots(); });
+document.addEventListener('click', e => { const b = e.target.closest('[data-shots]'); if(b) openShots(b.dataset.shots); });
+document.addEventListener('keydown', e => {
+  if($('#shots').hidden) return;
+  if(e.key === 'Escape') closeShots();
+  if(e.key === 'ArrowRight' && svI < svList.length - 1) svGo(svI + 1);
+  if(e.key === 'ArrowLeft' && svI > 0) svGo(svI - 1);
+});
+{ let x0 = null; const w = $('#svImgWrap');
+  w.addEventListener('touchstart', e => { x0 = e.touches[0].clientX; }, {passive:true});
+  w.addEventListener('touchend', e => { if(x0 === null || w.classList.contains('zoom')) return; const dx = e.changedTouches[0].clientX - x0; x0 = null;
+    if(dx < -70 && svI < svList.length - 1) svGo(svI + 1); if(dx > 70 && svI > 0) svGo(svI - 1); }, {passive:true}); }
 
 /* Note box: free text + quick tags, stored in `notes` (linked to the visit), several per visit allowed */
 const NOTE_TAGS = ['Veut une démo complète','À rappeler','Question tarif','Décideur','Projet sous 6 mois','Réseau / groupement','Logiciel actuel : '];
