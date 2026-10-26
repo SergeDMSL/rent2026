@@ -406,7 +406,7 @@ button.demo{border:0;cursor:pointer}
 /* live links disappear when offline */
 body.offline .live{display:none!important}
 .demo.live{background:#fff;color:var(--black);border:1.5px solid var(--black)}
-/* WHIZ button */
+/* AI assistant button (the AI is only ever called WHISE in visible copy) */
 .demo.whiz{background:#fff;color:var(--black);border:1.5px solid var(--black)}
 .demo.whiz::before{content:"";width:14px;height:14px;border-radius:50%;background:var(--warm-d)}
 
@@ -568,22 +568,22 @@ body.presenter .prestoggle{opacity:.8}
    QR_URL: booking link for the QR code on the closing band (not rendered yet).
    ============================================================ */
 const DEMO_BASE = "https://webstg.whise.ai/whise-extensive.html";   // new WHISE web prototype (staging)
-const WHIZ_URL = "https://whizstg.whise.ai/";                          // WHIZ, the prompt version (staging)
+const AI_URL = "https://whizstg.whise.ai/";                          // AI assistant, prompt version (staging)
 /* Screens of the new WHISE prototype (webstg.whise.ai, French UI and French demo data, 21 Oct 2026)
-   and of WHIZ, the AI assistant (whizstg.whise.ai, screenshots by Serge, personal data cropped out),
+   and of the WHISE AI assistant (whizstg.whise.ai, screenshots by Serge, personal data cropped out),
    stored in the site so the demo works offline. Demo data, not real clients. */
 const SHOTS = {
   relance:   [['opportunities','Pipeline : chaque vendeur et chaque acquéreur suit son parcours, étape par étape, avec la prochaine action.'],
               ['tasks','Tâches : les relances à faire, prêtes à traiter et assignées à chaque agent.']],
   reactivite:[['today','Aujourd’hui : les nouvelles demandes, les leads chauds et les relances déjà rédigées en brouillon.'],
               ['contacts','Contacts : le score montre en un coup d’œil les contacts les plus engagés.'],
-              ['whiz-home','WHIZ, l’assistant IA de WHISE (bêta) : « Hottest leads », « What needs my attention »… vos priorités en un geste.']],
+              ['whiz-home','L’assistant IA WHISE (bêta) : « Hottest leads », « What needs my attention »… vos priorités en un geste.']],
   base:      [['today','« Julie Bernard correspond à 6 nouveaux biens » : WHISE repère les rapprochements dans votre base.'],
               ['campaigns','E-mailing : des campagnes ciblées pour réactiver acquéreurs, vendeurs et anciens clients.']],
   admin:     [['estates','Biens : une seule liste pour diffuser, suivre les rapprochements et le score de publication.'],
-              ['whiz-slots','WHIZ : « trouve-moi un créneau de visite » et l’assistant affiche les disponibilités de vos agendas, sans aller-retour.']],
-  terrain:   [['whiz-home','WHIZ, l’assistant IA de WHISE (bêta) : posez votre question à la voix avec le micro, depuis le terrain.'],
-              ['whiz-slots','WHIZ : un créneau de visite trouvé en une phrase, entre deux rendez-vous.']],
+              ['whiz-slots','L’assistant IA WHISE : « trouve-moi un créneau de visite » et il affiche les disponibilités de vos agendas, sans aller-retour.']],
+  terrain:   [['whiz-home','L’assistant IA WHISE (bêta) : posez votre question à la voix avec le micro, depuis le terrain.'],
+              ['whiz-slots','L’assistant IA WHISE : un créneau de visite trouvé en une phrase, entre deux rendez-vous.']],
   conformite:[['tx-board','Pipeline des transactions : de la prospection au mandat signé, puis au compromis et à l’acte, dossier par dossier.']],
   pilotage:  [['txdash','Tableau de bord des transactions : conversion, délais et commission, étape par étape.'],
               ['today','Aujourd’hui : le pipeline par statut et les leads par source, sur un seul écran.']],
@@ -655,7 +655,7 @@ const PAINS = [
     how:['<b>Création de biens à la voix</b> : dictez les caractéristiques d’un bien dans l’application mobile.',
          '<b>Comptes rendus de visite</b> intégrés au parcours vendeur.',
          '<b>Vos données restent les vôtres</b> : export complet de vos contacts, biens et historiques, à tout moment.'],
-    demo:'', whiz:'Crée un bien : maison 3 chambres avec jardin, 450 000 €, visitée ce matin.', show:'WHIZ : créer un bien en le décrivant, comme sur le terrain.' },
+    demo:'', whiz:'Crée un bien : maison 3 chambres avec jardin, 450 000 €, visitée ce matin.', show:'Assistant IA WHISE : créer un bien en le décrivant, comme sur le terrain.' },
 
   { id:'conformite', icon:'shield', segs:['agence','mandataire','reseau'],
     q:'La pression réglementaire sur chaque transaction',
@@ -818,9 +818,9 @@ function demoLink(p){
   if(!n && !p.demo && !p.whiz) return `<span class="demo todo pres">Pas d’écran : accompagnement</span>`;
   /* live prototypes: shown only when the device is online (body.offline hides them) */
   const live = (p.demo ? `<a class="demo live" href="${DEMO_BASE}?db=fr-FR&lang=fr-FR${p.demo}" target="_blank" rel="noopener">WHISE en direct ↗</a>` : '')
-    + (p.whiz ? `<a class="demo live whiz" href="${WHIZ_URL}" target="_blank" rel="noopener" data-q="${p.whiz.replace(/"/g,'&quot;')}">WHIZ en direct ↗</a>` : '');
+    + (p.whiz ? `<a class="demo live whiz" href="${AI_URL}" target="_blank" rel="noopener" data-q="${p.whiz.replace(/"/g,'&quot;')}">Assistant IA WHISE ↗</a>` : '');
   return `<button type="button" class="demo" data-shots="${p.id}">Voir dans WHISE →</button>${live}<span class="note">${n} écran${n>1?'s':''} du nouveau WHISE${live ? '<span class="live"> · ou en direct</span>' : ''}</span>`
-    + (p.whiz ? `<span class="note pres live"><b>Question WHIZ copiée au clic&nbsp;:</b> « ${p.whiz} »</span>` : '');
+    + (p.whiz ? `<span class="note pres live"><b>Question copiée pour l’assistant IA&nbsp;:</b> « ${p.whiz} »</span>` : '');
 }
 
 const SHORT = {relance:'Relances', reactivite:'Réactivité', base:'Base qui dort', admin:'Administratif', terrain:'Terrain', conformite:'Réglementaire', pilotage:'Pilotage', migration:'Changer de logiciel'};
@@ -988,7 +988,7 @@ const togglePres = () => document.body.classList.toggle('presenter');
 $('#prestoggle').onclick = togglePres;
 const setOnline = () => document.body.classList.toggle('offline', !navigator.onLine);
 window.addEventListener('online', setOnline); window.addEventListener('offline', setOnline); setOnline();
-/* WHIZ: copy the suggested question when opening the live assistant */
+/* AI assistant: copy the suggested question when opening the live assistant */
 document.addEventListener('click', e => { const a = e.target.closest('a.whiz'); if(a && a.dataset.q){ try{ navigator.clipboard.writeText(a.dataset.q).catch(()=>{}); }catch(err){} } });
 const typing = e => /^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName) || e.target.isContentEditable;
 document.addEventListener('keydown', e => { if(!typing(e) && (e.key==='p'||e.key==='P')) togglePres(); });
